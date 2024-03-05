@@ -9,12 +9,12 @@ sealed class MatchStyle {
 }
 
 fun interface MatchStyleProvider {
-    fun provideStyle(text: String, match: TextMatchResult): MatchStyle?
+    fun provideStyle(match: TextMatchResult): MatchStyle?
 }
 
 object MatchStyleProviderDefaults {
-    val NoOp = MatchStyleProvider { _, _ -> null }
-    val Underline = MatchStyleProvider { _, _ ->
+    val NoOp = MatchStyleProvider { null }
+    val Underline = MatchStyleProvider {
         MatchStyle.SpanStyle(
             SpanStyle(textDecoration = TextDecoration.Underline)
         )

@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 fun AutoLinkText(
     text: String,
     modifier: Modifier = Modifier,
-    textRules: List<TextRule> = TextRulesDefault(LocalContext.current),
+    textRules: List<TextRule> = TextRule.defaultList(LocalContext.current),
     style: TextStyle = TextStyle.Default,
     softWrap: Boolean = true,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -34,10 +34,8 @@ fun AutoLinkText(
         overflow = overflow,
         maxLines = maxLines,
         onTextLayout = onTextLayout,
-    ) {offset ->
+    ) { offset ->
         val match = matches.find { it.start <= offset && it.end > offset }
-        if (match != null) {
-            match.rule?.matchClickHandler?.handleClick(text, match)
-        }
+        match?.rule?.matchClickHandler?.handleClick(match)
     }
 }

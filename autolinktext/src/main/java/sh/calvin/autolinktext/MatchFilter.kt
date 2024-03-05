@@ -1,6 +1,5 @@
 package sh.calvin.autolinktext
 
-
 // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=209;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
 /**
  *  MatchFilter enables client code to have more control over
@@ -23,23 +22,23 @@ fun interface MatchFilter {
      *
      * @return         Whether this match should be turned into a link
      */
-    fun acceptMatch(s: String, match: TextMatchResult): Boolean
+    fun acceptMatch(match: TextMatchResult): Boolean
 }
 
 object MatchFilterDefaults {
-    val NoOp = MatchFilter { _, _ -> true }
+    val NoOp = MatchFilter { true }
 
     // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=151;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
     /**
      *  Filters out web URL matches that occur after an at-sign (@).  This is
      *  to prevent turning the domain name in an email address into a web link.
      */
-    val WebUrls = MatchFilter { s, match ->
-        if (match.start == 0) {
+    val WebUrls = MatchFilter {
+        if (it.start == 0) {
             return@MatchFilter true
         }
 
-        if (s[match.start - 1] == '@') {
+        if (it.text[it.start - 1] == '@') {
             return@MatchFilter false
         }
 
@@ -58,11 +57,11 @@ object MatchFilterDefaults {
      *  Filters out URL matches that don't have enough digits to be a
      *  phone number.
      */
-    val PhoneNumbers = MatchFilter { s, match ->
+    val PhoneNumbers = MatchFilter {
         var digitCount = 0
 
-        for (i in match.start until match.end) {
-            if (Character.isDigit(s[i])) {
+        for (i in it.start until it.end) {
+            if (Character.isDigit(it.text[i])) {
                 digitCount++
                 if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {
                     return@MatchFilter true

@@ -3,8 +3,39 @@ package sh.calvin.autolinktext
 import kotlin.text.MatchResult
 import java.util.regex.Matcher
 
-sealed class TextMatchResult {
-    var rule: TextRule? = null
+sealed class TextMatchResult(
+    val rule: TextRule,
+    val text: String,
+) {
+    companion object {
+        fun fromSimpleTextMatchResult(
+            simpleTextMatchResult: SimpleTextMatchResult,
+            rule: TextRule,
+            text: String
+        ) = when (simpleTextMatchResult) {
+            is SimpleTextMatchResult.TextMatch -> TextMatch(
+                rule,
+                text,
+                simpleTextMatchResult.start,
+                simpleTextMatchResult.end
+            )
+
+            is SimpleTextMatchResult.MatcherMatch -> MatcherMatch(
+                rule,
+                text,
+                simpleTextMatchResult.matcher,
+                simpleTextMatchResult.start,
+                simpleTextMatchResult.end
+            )
+
+            is SimpleTextMatchResult.RegexMatch -> RegexMatch(
+                rule,
+                text,
+                simpleTextMatchResult.matchResult
+            )
+        }
+    }
+
     /**
      * The index of the first character in s that was
      * matched by the pattern - inclusive
@@ -17,16 +48,27 @@ sealed class TextMatchResult {
      */
     abstract val end: Int
 
-    class TextMatch(override val start: Int, override val end: Int) : TextMatchResult()
+    val matchedText: String
+        get() = text.slice(this)
 
-    class MatcherMatch(val matcher: Matcher) : TextMatchResult() {
-        override val start: Int
-            get() = matcher.start()
+    class TextMatch(rule: TextRule, text: String, override val start: Int, override val end: Int) :
+        TextMatchResult(rule, text)
+
+    class MatcherMatch(
+        rule: TextRule,
+        text: String,
+        val matcher: Matcher,
+        override val start: Int,
         override val end: Int
-            get() = matcher.end()
-    }
+    ) :
+        TextMatchResult(rule, text)
 
-    class RegexMatch(val matchResult: MatchResult) : TextMatchResult() {
+    class RegexMatch(
+        rule: TextRule,
+        text: String,
+        val matchResult: MatchResult,
+    ) :
+        TextMatchResult(rule, text) {
         override val start: Int
             get() = matchResult.range.start
         override val end: Int

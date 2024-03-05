@@ -2,7 +2,6 @@ package sh.calvin.autolinktext
 
 import android.content.Context
 import androidx.compose.ui.text.AnnotatedString
-import java.util.UUID
 
 class TextRule(
     val textMatcher: TextMatcher,
@@ -11,43 +10,52 @@ class TextRule(
     val matchClickHandler: MatchClickHandler = MatchClickHandlerDefaults.NoOp
 ) {
     companion object {
-        fun WebUrl(context: Context) = TextRule(
+        fun webUrl(context: Context) = TextRule(
             textMatcher = TextMatcher.WebUrl,
             matchFilter = MatchFilterDefaults.WebUrls,
-            matchClickHandler = MatchClickHandlerDefaults.WebUrl(context),
+            matchClickHandler = MatchClickHandlerDefaults.webUrl(context),
         )
 
-        fun EmailAddress(context: Context) = TextRule(
+        fun emailAddress(context: Context) = TextRule(
             textMatcher = TextMatcher.EmailAddress,
-            matchClickHandler = MatchClickHandlerDefaults.EmailAddress(context),
+            matchClickHandler = MatchClickHandlerDefaults.emailAddress(context),
         )
 
-        fun PhoneNumber(context: Context) = TextRule(
+        fun phoneNumber(context: Context) = TextRule(
             textMatcher = TextMatcher.PhoneNumber(context),
-            matchClickHandler = MatchClickHandlerDefaults.PhoneNumber(context),
+            matchFilter = MatchFilterDefaults.PhoneNumbers,
+            matchClickHandler = MatchClickHandlerDefaults.phoneNumber(context),
+        )
+
+        fun defaultList(context: Context) = listOf(
+            webUrl(context),
+            emailAddress(context),
+            phoneNumber(context),
         )
     }
+
+    fun copy(
+        textMatcher: TextMatcher = this.textMatcher,
+        matchFilter: MatchFilter = this.matchFilter,
+        matchStyleProvider: MatchStyleProvider = this.matchStyleProvider,
+        matchClickHandler: MatchClickHandler = this.matchClickHandler
+    ) = TextRule(
+        textMatcher = textMatcher,
+        matchFilter = matchFilter,
+        matchStyleProvider = matchStyleProvider,
+        matchClickHandler = matchClickHandler
+    )
 }
 
-fun TextRulesDefault(context: Context) = listOf(
-    TextRule.WebUrl(context),
-    TextRule.EmailAddress(context),
-    TextRule.PhoneNumber(context),
-)
-
-internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> {
-    val matches = mutableListOf<TextMatchResult>()
-    forEach { rule ->
-        val ruleMatches = rule.textMatcher.apply(text)
-        ruleMatches.forEach { match ->
-            if (rule.matchFilter.acceptMatch(text, match)) {
-                matches.add(match.apply {
-                    this.rule = rule
-                })
-            }
+internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> = flatMap {
+    it.textMatcher.apply(text).mapNotNull { match ->
+        val result = TextMatchResult.fromSimpleTextMatchResult(match, it, text)
+        if (it.matchFilter.acceptMatch(result)) {
+            result
+        } else {
+            null
         }
     }
-    return matches
 }
 
 // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=737;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
@@ -102,7 +110,7 @@ internal fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
 internal fun List<TextMatchResult>.annotateString(text: String): AnnotatedString {
     val annotatedString = AnnotatedString.Builder(text)
     forEach { match ->
-        when (val style = match.rule?.matchStyleProvider?.provideStyle(text, match)) {
+        when (val style = match.rule.matchStyleProvider.provideStyle(match)) {
             is MatchStyle.ParagraphStyle -> annotatedString.addStyle(
                 style.style,
                 match.start,
