@@ -6,7 +6,7 @@ import android.net.Uri
 import android.telephony.PhoneNumberUtils
 import androidx.core.net.toUri
 
-typealias MatchClickHandler = (TextMatchResult) -> Unit
+typealias MatchClickHandler = (match: TextMatchResult) -> Unit
 
 object MatchClickHandlerDefaults {
     val NoOp: MatchClickHandler = { }

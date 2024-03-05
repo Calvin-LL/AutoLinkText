@@ -12,12 +12,9 @@ package sh.calvin.autolinktext
  * might also include a MatchFilter that disallows the match if it is
  * immediately preceded by an at-sign (@).
  *
- * @param s        The body of text against which the pattern
- * was matched
- *
  * @return         Whether this match should be turned into a link
  */
-typealias MatchFilter = (TextMatchResult) -> Boolean
+typealias MatchFilter = (match: TextMatchResult) -> Boolean
 
 object MatchFilterDefaults {
     val NoOp: MatchFilter = { true }

@@ -70,9 +70,9 @@ sealed class TextMatchResult(
     ) :
         TextMatchResult(rule, text) {
         override val start: Int
-            get() = matchResult.range.start
+            get() = matchResult.range.first
         override val end: Int
-            get() = matchResult.range.endInclusive + 1
+            get() = matchResult.range.last + 1
     }
 }
 

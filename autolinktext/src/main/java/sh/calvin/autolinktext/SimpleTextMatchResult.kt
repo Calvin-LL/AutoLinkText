@@ -1,6 +1,5 @@
 package sh.calvin.autolinktext
 
-import kotlin.text.MatchResult
 import java.util.regex.Matcher
 
 sealed class SimpleTextMatchResult {
@@ -49,9 +48,9 @@ sealed class SimpleTextMatchResult {
     ) :
         SimpleTextMatchResult() {
         override val start: Int
-            get() = matchResult.range.start
+            get() = matchResult.range.first
         override val end: Int
-            get() = matchResult.range.endInclusive + 1
+            get() = matchResult.range.last + 1
     }
 }
 
