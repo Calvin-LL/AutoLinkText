@@ -35,30 +35,4 @@ object MatchFilterDefaults {
 
         return true
     }
-
-    // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=140;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
-    /**
-     * Don't treat anything with fewer than this many digits as a
-     * phone number.
-     */
-    private const val PHONE_NUMBER_MINIMUM_DIGITS = 5
-
-    // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=169;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
-    /**
-     *  Filters out URL matches that don't have enough digits to be a
-     *  phone number.
-     */
-    val PhoneNumbers: MatchFilter = fun(text: String, match: SimpleTextMatchResult): Boolean {
-        var digitCount = 0
-
-        for (i in match.start until match.end) {
-            if (Character.isDigit(text[i])) {
-                digitCount++
-                if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
 }
