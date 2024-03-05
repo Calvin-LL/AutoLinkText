@@ -37,6 +37,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -51,9 +56,7 @@ dependencies {
     implementation(libs.libphonenumber)
 
     testImplementation(libs.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.robolectric)
 }
 
 mavenPublishing {
