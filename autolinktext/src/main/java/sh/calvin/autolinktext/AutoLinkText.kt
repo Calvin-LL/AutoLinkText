@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -12,18 +13,18 @@ import androidx.compose.ui.text.style.TextOverflow
 fun AutoLinkText(
     text: String,
     modifier: Modifier = Modifier,
-    textRules: List<TextRule> = TextRulesDefault,
+    textRules: List<TextRule> = TextRulesDefault(LocalContext.current),
     style: TextStyle = TextStyle.Default,
     softWrap: Boolean = true,
     overflow: TextOverflow = TextOverflow.Clip,
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
-    val annotatedString = remember(text, textRules) {
-        textRules.annotateString(text)
+    val matches = remember(text, textRules) {
+        textRules.getAllMatches(text).pruneOverlaps()
     }
-    val textRulesMap = remember(textRules) {
-        textRules.associateBy { it.name }
+    val annotatedString = remember(matches) {
+        matches.annotateString(text)
     }
     ClickableText(
         text = annotatedString,
@@ -33,9 +34,10 @@ fun AutoLinkText(
         overflow = overflow,
         maxLines = maxLines,
         onTextLayout = onTextLayout,
-    ) {
-        val clickedAnnotation = annotatedString.getStringAnnotations(it, it).first()
-        val textRule = textRulesMap[clickedAnnotation.tag]
-//        textRule?.matchClickHandler?.handleClick(text)
+    ) {offset ->
+        val match = matches.find { it.start <= offset && it.end > offset }
+        if (match != null) {
+            match.rule?.matchClickHandler?.handleClick(text, match)
+        }
     }
 }

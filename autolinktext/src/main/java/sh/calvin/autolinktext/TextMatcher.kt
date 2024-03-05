@@ -1,11 +1,16 @@
 package sh.calvin.autolinktext
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import android.telephony.TelephonyManager
+import android.text.TextUtils
 import androidx.core.util.PatternsCompat
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.PhoneNumberUtil.Leniency
 import java.util.Locale
 import java.util.regex.Pattern
+
 
 sealed class TextMatcher {
     companion object {
@@ -15,15 +20,25 @@ sealed class TextMatcher {
         @SuppressLint("RestrictedApi")
         val EmailAddress = PatternMatcher(PatternsCompat.AUTOLINK_EMAIL_ADDRESS)
 
-        val PhoneNumber = FunctionMatcher { text ->
-            val phoneUtil = PhoneNumberUtil.getInstance()
-            val regionCode = Locale.getDefault().country
-            val matches = phoneUtil.findNumbers(
-                text,
-                regionCode, Leniency.POSSIBLE, Long.MAX_VALUE
-            )
+        fun PhoneNumber(context: Context): FunctionMatcher {
+            val simCountryIso = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                context.getSystemService(TelephonyManager::class.java).simCountryIso.let {
+                    if (it.isNotEmpty()) it.uppercase() else null
+                }
+            } else {
+                null
+            }
 
-            matches.map { TextMatchResult.TextMatch(it.start(), it.end()) }
+            return FunctionMatcher { text ->
+                val phoneUtil = PhoneNumberUtil.getInstance()
+                val regionCode = simCountryIso ?: Locale.getDefault().country
+                val matches = phoneUtil.findNumbers(
+                    text,
+                    regionCode, Leniency.POSSIBLE, Long.MAX_VALUE
+                )
+
+                matches.map { TextMatchResult.TextMatch(it.start(), it.end()) }
+            }
         }
     }
 

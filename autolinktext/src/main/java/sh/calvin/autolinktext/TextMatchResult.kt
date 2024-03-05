@@ -1,8 +1,10 @@
 package sh.calvin.autolinktext
 
+import kotlin.text.MatchResult
 import java.util.regex.Matcher
 
 sealed class TextMatchResult {
+    var rule: TextRule? = null
     /**
      * The index of the first character in s that was
      * matched by the pattern - inclusive
@@ -24,11 +26,11 @@ sealed class TextMatchResult {
             get() = matcher.end()
     }
 
-    class RegexMatch(val regexMatchResult: MatchResult) : TextMatchResult() {
+    class RegexMatch(val matchResult: MatchResult) : TextMatchResult() {
         override val start: Int
-            get() = regexMatchResult.range.first
+            get() = matchResult.range.start
         override val end: Int
-            get() = regexMatchResult.range.last + 1
+            get() = matchResult.range.endInclusive + 1
     }
 }
 
