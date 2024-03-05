@@ -9,19 +9,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import sh.calvin.autolinktext.AutoLinkText
+import sh.calvin.autolinktext.TextMatcher
 import sh.calvin.autolinktext.TextRule
 import sh.calvin.autolinktext.demo.theme.AutoLinkTextTheme
 
@@ -56,6 +62,9 @@ fun MainScreen() {
                         "Call 6045557890\n" +
                         "Call +1 (604) 555-7890\n" +
                         "Call 604-555-7890\n",
+                style = LocalTextStyle.current.copy(
+                    color = LocalContentColor.current,
+                ),
             )
 
             AutoLinkText(
@@ -65,7 +74,8 @@ fun MainScreen() {
                         "Call 6045557890\n" +
                         "Call +1 (604) 555-7890\n" +
                         "Call 604-555-7890\n",
-                style = TextStyle.Default.copy(
+                style = LocalTextStyle.current.copy(
+                    color = LocalContentColor.current,
                     textAlign = TextAlign.Center,
                 )
             )
@@ -79,6 +89,9 @@ fun MainScreen() {
                         "Call 6045557890\n" +
                         "Call +1 (604) 555-7890\n" +
                         "Call 604-555-7890\n",
+                style = LocalTextStyle.current.copy(
+                    color = LocalContentColor.current,
+                ),
                 textRules = TextRule.defaultList(LocalContext.current).map {
                     it.copy(
                         matchStyleProvider = {
@@ -89,6 +102,23 @@ fun MainScreen() {
                         }
                     )
                 }
+            )
+
+            var clickCount by remember { mutableStateOf(0) }
+
+            AutoLinkText(
+                text = "Make this clickable, this too but not THIS. Click count: $clickCount.",
+                style = LocalTextStyle.current.copy(
+                    color = LocalContentColor.current,
+                ),
+                textRules = listOf(
+                    TextRule(
+                        textMatcher = TextMatcher.StringMatcher("this"),
+                        matchClickHandler = {
+                            clickCount++
+                        }
+                    )
+                )
             )
         }
     }
