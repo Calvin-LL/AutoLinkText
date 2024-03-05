@@ -9,11 +9,12 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 
+// TODO: Add more documentation
 @Composable
 fun AutoLinkText(
     text: String,
     modifier: Modifier = Modifier,
-    textRules: List<TextRule> = TextRule.defaultList(LocalContext.current),
+    textRules: Collection<TextRule> = TextRule.defaultList(LocalContext.current),
     style: TextStyle = TextStyle.Default,
     softWrap: Boolean = true,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -21,7 +22,7 @@ fun AutoLinkText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
     val matches = remember(text, textRules) {
-        textRules.getAllMatches(text).pruneOverlaps()
+        textRules.getAllMatches(text)
     }
     val annotatedString = remember(matches) {
         matches.annotateString(text)

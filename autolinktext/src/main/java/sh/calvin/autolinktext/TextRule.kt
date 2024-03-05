@@ -5,14 +5,12 @@ import androidx.compose.ui.text.AnnotatedString
 
 class TextRule(
     val textMatcher: TextMatcher,
-    val matchFilter: MatchFilter = MatchFilterDefaults.NoOp,
     val matchStyleProvider: MatchStyleProvider = MatchStyleProviderDefaults.Underline,
     val matchClickHandler: MatchClickHandler = MatchClickHandlerDefaults.NoOp
 ) {
     companion object {
         fun webUrl(context: Context) = TextRule(
             textMatcher = TextMatcher.WebUrl,
-            matchFilter = MatchFilterDefaults.WebUrls,
             matchClickHandler = MatchClickHandlerDefaults.webUrl(context),
         )
 
@@ -22,8 +20,7 @@ class TextRule(
         )
 
         fun phoneNumber(context: Context) = TextRule(
-            textMatcher = TextMatcher.PhoneNumber(context),
-            matchFilter = MatchFilterDefaults.PhoneNumbers,
+            textMatcher = TextMatcher.phoneNumber(context),
             matchClickHandler = MatchClickHandlerDefaults.phoneNumber(context),
         )
 
@@ -36,30 +33,24 @@ class TextRule(
 
     fun copy(
         textMatcher: TextMatcher = this.textMatcher,
-        matchFilter: MatchFilter = this.matchFilter,
         matchStyleProvider: MatchStyleProvider = this.matchStyleProvider,
         matchClickHandler: MatchClickHandler = this.matchClickHandler
     ) = TextRule(
         textMatcher = textMatcher,
-        matchFilter = matchFilter,
         matchStyleProvider = matchStyleProvider,
         matchClickHandler = matchClickHandler
     )
 }
 
-internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> = flatMap {
-    it.textMatcher.apply(text).mapNotNull { match ->
-        val result = TextMatchResult.fromSimpleTextMatchResult(match, it, text)
-        if (it.matchFilter(result)) {
-            result
-        } else {
-            null
+internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> =
+    flatMap { rule ->
+        rule.textMatcher.apply(text).map { match ->
+            TextMatchResult.fromSimpleTextMatchResult(match, rule, text)
         }
-    }
-}
+    }.pruneOverlaps()
 
 // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=737;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
-internal fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
+private fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
     val sortedList = sortedWith { a, b ->
         if (a.start < b.start) {
             return@sortedWith -1
@@ -126,6 +117,6 @@ internal fun List<TextMatchResult>.annotateString(text: String): AnnotatedString
 }
 
 fun Collection<TextRule>.annotateString(text: String): AnnotatedString {
-    val matches = getAllMatches(text).pruneOverlaps()
+    val matches = getAllMatches(text)
     return matches.annotateString(text)
 }

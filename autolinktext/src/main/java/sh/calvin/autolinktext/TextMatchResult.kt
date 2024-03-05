@@ -20,14 +20,6 @@ sealed class TextMatchResult(
                 simpleTextMatchResult.end
             )
 
-            is SimpleTextMatchResult.MatcherMatch -> MatcherMatch(
-                rule,
-                text,
-                simpleTextMatchResult.matcher,
-                simpleTextMatchResult.start,
-                simpleTextMatchResult.end
-            )
-
             is SimpleTextMatchResult.RegexMatch -> RegexMatch(
                 rule,
                 text,
@@ -52,15 +44,6 @@ sealed class TextMatchResult(
         get() = text.slice(this)
 
     class TextMatch(rule: TextRule, text: String, override val start: Int, override val end: Int) :
-        TextMatchResult(rule, text)
-
-    class MatcherMatch(
-        rule: TextRule,
-        text: String,
-        val matcher: Matcher,
-        override val start: Int,
-        override val end: Int
-    ) :
         TextMatchResult(rule, text)
 
     class RegexMatch(
