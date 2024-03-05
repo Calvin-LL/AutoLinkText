@@ -2,47 +2,41 @@ package sh.calvin.autolinktext
 
 // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=209;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
 /**
- *  MatchFilter enables client code to have more control over
- *  what is allowed to match and become a link, and what is not.
+ * Examines the character span matched by the pattern and determines
+ * if the match should be turned into an actionable link.
  *
- *  For example:  when matching web URLs you would like things like
- *  http://www.example.com to match, as well as just example.com itelf.
- *  However, you would not want to match against the domain in
- *  support@example.com.  So, when matching against a web URL pattern you
- *  might also include a MatchFilter that disallows the match if it is
- *  immediately preceded by an at-sign (@).
+ * For example:  when matching web URLs you would like things like
+ * http://www.example.com to match, as well as just example.com itself.
+ * However, you would not want to match against the domain in
+ * support@example.com.  So, when matching against a web URL pattern you
+ * might also include a MatchFilter that disallows the match if it is
+ * immediately preceded by an at-sign (@).
+ *
+ * @param s        The body of text against which the pattern
+ * was matched
+ *
+ * @return         Whether this match should be turned into a link
  */
-fun interface MatchFilter {
-    /**
-     * Examines the character span matched by the pattern and determines
-     * if the match should be turned into an actionable link.
-     *
-     * @param s        The body of text against which the pattern
-     * was matched
-     *
-     * @return         Whether this match should be turned into a link
-     */
-    fun acceptMatch(match: TextMatchResult): Boolean
-}
+typealias MatchFilter = (TextMatchResult) -> Boolean
 
 object MatchFilterDefaults {
-    val NoOp = MatchFilter { true }
+    val NoOp: MatchFilter = { true }
 
     // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=151;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
     /**
      *  Filters out web URL matches that occur after an at-sign (@).  This is
      *  to prevent turning the domain name in an email address into a web link.
      */
-    val WebUrls = MatchFilter {
-        if (it.start == 0) {
-            return@MatchFilter true
+    val WebUrls: MatchFilter = fun(match: TextMatchResult): Boolean {
+        if (match.start == 0) {
+            return true
         }
 
-        if (it.text[it.start - 1] == '@') {
-            return@MatchFilter false
+        if (match.text[match.start - 1] == '@') {
+            return false
         }
 
-        return@MatchFilter true
+        return true
     }
 
     // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=140;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
@@ -57,17 +51,17 @@ object MatchFilterDefaults {
      *  Filters out URL matches that don't have enough digits to be a
      *  phone number.
      */
-    val PhoneNumbers = MatchFilter {
+    val PhoneNumbers: MatchFilter = fun(match: TextMatchResult): Boolean {
         var digitCount = 0
 
-        for (i in it.start until it.end) {
-            if (Character.isDigit(it.text[i])) {
+        for (i in match.start until match.end) {
+            if (Character.isDigit(match.text[i])) {
                 digitCount++
                 if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {
-                    return@MatchFilter true
+                    return true
                 }
             }
         }
-        return@MatchFilter false
+        return false
     }
 }

@@ -8,13 +8,11 @@ sealed class MatchStyle {
     class SpanStyle(val style: androidx.compose.ui.text.SpanStyle) : MatchStyle()
 }
 
-fun interface MatchStyleProvider {
-    fun provideStyle(match: TextMatchResult): MatchStyle?
-}
+typealias MatchStyleProvider = (TextMatchResult) -> MatchStyle?
 
 object MatchStyleProviderDefaults {
-    val NoOp = MatchStyleProvider { null }
-    val Underline = MatchStyleProvider {
+    val NoOp: MatchStyleProvider = { null }
+    val Underline: MatchStyleProvider = {
         MatchStyle.SpanStyle(
             SpanStyle(textDecoration = TextDecoration.Underline)
         )

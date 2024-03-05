@@ -36,6 +36,6 @@ fun AutoLinkText(
         onTextLayout = onTextLayout,
     ) { offset ->
         val match = matches.find { it.start <= offset && it.end > offset }
-        match?.rule?.matchClickHandler?.handleClick(match)
+        match?.rule?.matchClickHandler?.invoke(match)
     }
 }

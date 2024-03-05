@@ -50,7 +50,7 @@ class TextRule(
 internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> = flatMap {
     it.textMatcher.apply(text).mapNotNull { match ->
         val result = TextMatchResult.fromSimpleTextMatchResult(match, it, text)
-        if (it.matchFilter.acceptMatch(result)) {
+        if (it.matchFilter(result)) {
             result
         } else {
             null
@@ -110,7 +110,7 @@ internal fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
 internal fun List<TextMatchResult>.annotateString(text: String): AnnotatedString {
     val annotatedString = AnnotatedString.Builder(text)
     forEach { match ->
-        when (val style = match.rule.matchStyleProvider.provideStyle(match)) {
+        when (val style = match.rule.matchStyleProvider(match)) {
             is MatchStyle.ParagraphStyle -> annotatedString.addStyle(
                 style.style,
                 match.start,
