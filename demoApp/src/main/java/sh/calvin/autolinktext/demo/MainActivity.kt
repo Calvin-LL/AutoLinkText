@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import sh.calvin.autolinktext.AutoLinkText
-import sh.calvin.autolinktext.MatchStyle
 import sh.calvin.autolinktext.TextRule
 import sh.calvin.autolinktext.demo.theme.AutoLinkTextTheme
 
@@ -83,11 +82,9 @@ fun MainScreen() {
                 textRules = TextRule.defaultList(LocalContext.current).map {
                     it.copy(
                         matchStyleProvider = {
-                            MatchStyle.SpanStyle(
-                                SpanStyle(
-                                    color = linkColor,
-                                    textDecoration = TextDecoration.Underline
-                                )
+                            SpanStyle(
+                                color = linkColor,
+                                textDecoration = TextDecoration.Underline
                             )
                         }
                     )
