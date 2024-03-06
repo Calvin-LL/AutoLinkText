@@ -7,12 +7,15 @@ import platform.Foundation.NSURLComponents
 import platform.UIKit.UIApplication
 
 actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler {
+    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
-                val url = NSURLComponents(it.matchedText).apply {
-                    scheme = scheme ?: "https"
-                }.URL
+                val url = when (val data = it.data) {
+                    is NSURL -> data
+                    else -> NSURLComponents(it.matchedText).apply {
+                        scheme = scheme ?: "https"
+                    }.URL
+                }
                 if (url != null && UIApplication.sharedApplication.canOpenURL(url)) {
                     UIApplication.sharedApplication.openURL(url)
                 } else {
@@ -24,10 +27,13 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler {
+    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
-                val url = NSURL(string = "mailto:${it.matchedText}")
+                val url = when (val data = it.data) {
+                    is NSURL -> data
+                    else -> NSURL(string = "mailto:${it.matchedText}")
+                }
                 if (UIApplication.sharedApplication.canOpenURL(url)) {
                     UIApplication.sharedApplication.openURL(url)
                 } else {
@@ -39,10 +45,13 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler {
+    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
-                val url = NSURL(string = "tel:${normalizePhoneNumber(it.matchedText)}")
+                val url = when (val data = it.data) {
+                    is NSURL -> data
+                    else -> NSURL(string = "tel:${normalizePhoneNumber(it.matchedText)}")
+                }
                 if (UIApplication.sharedApplication.canOpenURL(url)) {
                     UIApplication.sharedApplication.openURL(url)
                 } else {

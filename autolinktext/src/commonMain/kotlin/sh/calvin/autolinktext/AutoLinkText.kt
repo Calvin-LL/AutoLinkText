@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 fun AutoLinkText(
     text: String,
     modifier: Modifier = Modifier,
-    textRules: Collection<TextRule> = TextRuleDefaults.defaultList(),
+    textRules: Collection<TextRule<Any?>> = TextRuleDefaults.defaultList(),
     style: TextStyle = TextStyle.Default,
     softWrap: Boolean = true,
     overflow: TextOverflow = TextOverflow.Clip,

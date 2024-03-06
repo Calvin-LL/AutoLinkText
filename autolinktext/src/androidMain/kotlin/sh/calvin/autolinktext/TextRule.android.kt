@@ -7,7 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 class AndroidContextData(val context: Context) : ContextData
 
 @Composable
-internal actual fun platformWebUrl(): TextRule {
+internal actual fun platformWebUrl(): TextRule<Any?> {
     val context = AndroidContextData(context = LocalContext.current)
 
     return TextRule(
@@ -17,7 +17,7 @@ internal actual fun platformWebUrl(): TextRule {
 }
 
 @Composable
-internal actual fun platformEmailAddress(): TextRule {
+internal actual fun platformEmailAddress(): TextRule<Any?> {
     val context = AndroidContextData(context = LocalContext.current)
 
     return TextRule(
@@ -27,7 +27,7 @@ internal actual fun platformEmailAddress(): TextRule {
 }
 
 @Composable
-internal actual fun platformPhoneNumber(): TextRule {
+internal actual fun platformPhoneNumber(): TextRule<Any?> {
     val context = AndroidContextData(context = LocalContext.current)
 
     return TextRule(
@@ -41,7 +41,7 @@ internal actual fun platformPhoneNumber(): TextRule {
  */
 @OptIn(NotForAndroid::class)
 @Composable
-actual fun platformDefaultList(): List<TextRule> {
+actual fun platformDefaultList(): List<TextRule<Any?>> {
     val context = AndroidContextData(context = LocalContext.current)
 
     return listOf(

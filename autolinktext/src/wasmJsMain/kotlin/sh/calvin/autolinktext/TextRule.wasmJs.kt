@@ -4,20 +4,20 @@ import androidx.compose.runtime.Composable
 
 @OptIn(NotForAndroid::class)
 @Composable
-internal actual fun platformWebUrl(): TextRule = TextRuleDefaults.webUrl(NullContextData)
+internal actual fun platformWebUrl(): TextRule<Any?> = TextRuleDefaults.webUrl(NullContextData)
 
 @OptIn(NotForAndroid::class)
 @Composable
-internal actual fun platformEmailAddress(): TextRule =
+internal actual fun platformEmailAddress(): TextRule<Any?> =
     TextRuleDefaults.emailAddress(NullContextData)
 
 @OptIn(NotForAndroid::class)
 @Composable
-internal actual fun platformPhoneNumber(): TextRule = TextRuleDefaults.phoneNumber(NullContextData)
+internal actual fun platformPhoneNumber(): TextRule<Any?> = TextRuleDefaults.phoneNumber(NullContextData)
 
 @OptIn(NotForAndroid::class)
 @Composable
-actual fun platformDefaultList(): List<TextRule> = listOf(
+actual fun platformDefaultList(): List<TextRule<Any?>> = listOf(
     TextRuleDefaults.webUrl(NullContextData),
     TextRuleDefaults.emailAddress(NullContextData),
     TextRuleDefaults.phoneNumber(NullContextData),

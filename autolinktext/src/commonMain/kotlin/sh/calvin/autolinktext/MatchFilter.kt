@@ -14,17 +14,17 @@ package sh.calvin.autolinktext
  *
  * @return         Whether this match should be turned into a link
  */
-typealias MatchFilter = (fullText: String, match: SimpleTextMatchResult) -> Boolean
+typealias MatchFilter<T> = (fullText: String, match: SimpleTextMatchResult<T>) -> Boolean
 
 object MatchFilterDefaults {
-    val NoOp: MatchFilter = { _, _ -> true }
+    val NoOp: MatchFilter<Any?> = { _, _ -> true }
 
     // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=151;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
     /**
      *  Filters out web URL matches that occur after an at-sign (@).  This is
      *  to prevent turning the domain name in an email address into a web link.
      */
-    val WebUrls: MatchFilter = fun(fullText: String, match: SimpleTextMatchResult): Boolean {
+    val WebUrls: MatchFilter<Any?> = fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
         if (match.start == 0) {
             return true
         }
@@ -47,7 +47,7 @@ object MatchFilterDefaults {
      *  Filters out URL matches that don't have enough digits to be a
      *  phone number.
      */
-    val PhoneNumber: MatchFilter = fun(fullText: String, match: SimpleTextMatchResult): Boolean {
+    val PhoneNumber: MatchFilter<Any?> = fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
         var digitCount = 0
 
         for (i in match.start until match.end) {

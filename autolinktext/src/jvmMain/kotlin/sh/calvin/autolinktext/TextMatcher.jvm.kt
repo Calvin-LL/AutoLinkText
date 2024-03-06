@@ -5,15 +5,15 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 import java.util.Locale
 
 actual object TextMatcherDefaults {
-    actual fun webUrl(contextData: ContextData): TextMatcher {
+    actual fun webUrl(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.RegexMatcher(BackUpRegex.WebUrl, MatchFilterDefaults.WebUrls)
     }
 
-    actual fun emailAddress(contextData: ContextData): TextMatcher {
+    actual fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.RegexMatcher(BackUpRegex.Email)
     }
 
-    actual fun phoneNumber(contextData: ContextData): TextMatcher {
+    actual fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             val phoneUtil = PhoneNumberUtil.getInstance()
             val regionCode = Locale.getDefault().country
@@ -23,18 +23,18 @@ actual object TextMatcherDefaults {
             )
 
             matches.mapNotNull {
-                val result = SimpleTextMatchResult.TextMatch(it.start(), it.end())
+                val result = SimpleTextMatchResult(it.start(), it.end())
                 if (MatchFilterDefaults.PhoneNumber(text, result)) result else null
             }
         }
     }
 
     @Composable
-    actual fun webUrl(): TextMatcher = webUrl(NullContextData)
+    actual fun webUrl() = webUrl(NullContextData)
 
     @Composable
-    actual fun emailAddress(): TextMatcher = emailAddress(NullContextData)
+    actual fun emailAddress() = emailAddress(NullContextData)
 
     @Composable
-    actual fun phoneNumber(): TextMatcher = phoneNumber(NullContextData)
+    actual fun phoneNumber() = phoneNumber(NullContextData)
 }

@@ -2,6 +2,7 @@ package sh.calvin.autolinktext
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TextMatchResultTest {
@@ -9,7 +10,7 @@ class TextMatchResultTest {
     fun shouldReturnCorrectSubstring() {
         val rule = TextRule(TextMatcher.StringMatcher("test"))
         val text = "123abc456def789"
-        val match = TextMatchResult.TextMatch(rule, text, 3, 6)
+        val match = TextMatchResult(rule, text, 3, 6)
 
         val result = text.slice(match)
 
@@ -17,21 +18,60 @@ class TextMatchResultTest {
     }
 
     @Test
-    fun shouldConstructFromSimpleTextMatchResult() {
+    fun shouldConstructWithoutData() {
         val rule = TextRule(TextMatcher.StringMatcher("test"))
         val text = "123abc456def789"
 
-        val textMatchResult = SimpleTextMatchResult.TextMatch(3, 6)
-        val result = TextMatchResult.fromSimpleTextMatchResult(
-            textMatchResult,
+        val result = TextMatchResult(
             rule,
-            text
+            text,
+            3,
+            6
         )
 
-        assertTrue(result is TextMatchResult.TextMatch)
         assertEquals(rule, result.rule)
         assertEquals(text, result.fullText)
         assertEquals(3, result.start)
         assertEquals(6, result.end)
+        assertNull(result.data)
+    }
+
+    @Test
+    fun shouldConstructFromSimpleTextMatchResultWithoutData() {
+        val rule = TextRule(TextMatcher.StringMatcher("test"))
+        val text = "123abc456def789"
+
+        val textMatchResult = SimpleTextMatchResult(3, 6)
+        val result = TextMatchResult(
+            rule,
+            text,
+            textMatchResult
+        )
+
+        assertEquals(rule, result.rule)
+        assertEquals(text, result.fullText)
+        assertEquals(3, result.start)
+        assertEquals(6, result.end)
+        assertNull(result.data)
+    }
+
+    @Test
+    fun shouldConstructFromSimpleTextMatchResultWithData() {
+        val rule = TextRule(TextMatcher.RegexMatcher(Regex("abc")))
+        val text = "123abc456def789"
+        val matchResult = Regex("abc").find(text)!!
+
+        val textMatchResult = SimpleTextMatchResult(3, 6, matchResult)
+        val result = TextMatchResult(
+            rule,
+            text,
+            textMatchResult
+        )
+
+        assertEquals(rule, result.rule)
+        assertEquals(text, result.fullText)
+        assertEquals(3, result.start)
+        assertEquals(6, result.end)
+        assertEquals(matchResult, result.data)
     }
 }

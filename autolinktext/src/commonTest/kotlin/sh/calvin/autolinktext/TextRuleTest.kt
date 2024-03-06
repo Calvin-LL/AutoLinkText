@@ -29,8 +29,8 @@ class TextRuleTest {
     @Test
     fun testCopy1() {
         val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider: MatchStyleProvider = { null }
-        val clickHandler: MatchClickHandler = { }
+        val styleProvider: MatchStyleProvider<Any?> = { null }
+        val clickHandler: MatchClickHandler<Any?> = { }
         val rule = TextRule(
             textMatcher = textMatcher,
             matchStyleProvider = styleProvider,
@@ -46,8 +46,8 @@ class TextRuleTest {
     @Test
     fun testCopy2() {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider = { null }
-        val clickHandler1: MatchClickHandler = { }
+        val styleProvider1: MatchStyleProvider<Any?> = { null }
+        val clickHandler1: MatchClickHandler<Any?> = { }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
             matchStyleProvider = styleProvider1,
@@ -55,8 +55,8 @@ class TextRuleTest {
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val styleProvider2: MatchStyleProvider = { null }
-        val clickHandler2: MatchClickHandler = { }
+        val styleProvider2: MatchStyleProvider<Any?> = { null }
+        val clickHandler2: MatchClickHandler<Any?> = { }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
             matchStyleProvider = styleProvider2,
@@ -71,8 +71,8 @@ class TextRuleTest {
     @Test
     fun testCopy3() {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider = { null }
-        val clickHandler1: MatchClickHandler = { }
+        val styleProvider1: MatchStyleProvider<Any?> = { null }
+        val clickHandler1: MatchClickHandler<Any?> = { }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
             matchStyleProvider = styleProvider1,
@@ -80,7 +80,7 @@ class TextRuleTest {
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val clickHandler2: MatchClickHandler = { }
+        val clickHandler2: MatchClickHandler<Any?> = { }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
             matchStyle = null,
@@ -95,8 +95,8 @@ class TextRuleTest {
     @Test
     fun testCopy4() {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider = { null }
-        val clickHandler1: MatchClickHandler = { }
+        val styleProvider1: MatchStyleProvider<Any?> = { null }
+        val clickHandler1: MatchClickHandler<Any?> = { }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
             matchStyleProvider = styleProvider1,
@@ -104,7 +104,7 @@ class TextRuleTest {
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val clickHandler2: MatchClickHandler = { }
+        val clickHandler2: MatchClickHandler<Any?> = { }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
             matchClickHandler = clickHandler2

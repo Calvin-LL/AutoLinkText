@@ -7,7 +7,7 @@ import java.net.URI
 import java.net.URL
 
 actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler {
+    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
         return {result ->
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.BROWSE)
@@ -26,7 +26,7 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler {
+    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.MAIL)
@@ -38,7 +38,7 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler {
+    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.BROWSE)

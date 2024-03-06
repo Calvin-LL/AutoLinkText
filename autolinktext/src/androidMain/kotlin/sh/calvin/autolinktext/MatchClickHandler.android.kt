@@ -8,14 +8,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 
 actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler =
+    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val url = it.matchedText
             val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler =
+    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val email = it.matchedText
             val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -25,7 +25,7 @@ actual object MatchClickHandlerDefaults {
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler =
+    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val phone = PhoneNumberUtils.normalizeNumber(it.matchedText)
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))

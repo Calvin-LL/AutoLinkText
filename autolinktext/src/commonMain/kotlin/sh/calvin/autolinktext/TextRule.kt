@@ -10,16 +10,16 @@ interface ContextData
 val NullContextData: ContextData = object : ContextData {}
 
 @Composable
-internal expect fun platformWebUrl(): TextRule
+internal expect fun platformWebUrl(): TextRule<Any?>
 
 @Composable
-internal expect fun platformEmailAddress(): TextRule
+internal expect fun platformEmailAddress(): TextRule<Any?>
 
 @Composable
-internal expect fun platformPhoneNumber(): TextRule
+internal expect fun platformPhoneNumber(): TextRule<Any?>
 
 @Composable
-internal expect fun platformDefaultList(): List<TextRule>
+internal expect fun platformDefaultList(): List<TextRule<Any?>>
 
 object TextRuleDefaults {
     @NotForAndroid
@@ -41,16 +41,16 @@ object TextRuleDefaults {
     )
 
     @Composable
-    fun webUrl(): TextRule = platformWebUrl()
+    fun webUrl() = platformWebUrl()
 
     @Composable
-    fun emailAddress(): TextRule = platformEmailAddress()
+    fun emailAddress() = platformEmailAddress()
 
     @Composable
-    fun phoneNumber(): TextRule = platformPhoneNumber()
+    fun phoneNumber() = platformPhoneNumber()
 
     @Composable
-    fun defaultList(): List<TextRule> = platformDefaultList()
+    fun defaultList(): List<TextRule<Any?>> = platformDefaultList()
 }
 
 /**
@@ -60,17 +60,17 @@ object TextRuleDefaults {
  * @param matchStyleProvider The provider to provide style for the matched text.
  * @param onClick The handler to handle click events on the matched text.
  */
-class TextRule(
-    val textMatcher: TextMatcher,
-    val matchStyleProvider: MatchStyleProvider,
-    val onClick: MatchClickHandler = {}
+class TextRule<T>(
+    val textMatcher: TextMatcher<T>,
+    val matchStyleProvider: MatchStyleProvider<T>,
+    val onClick: MatchClickHandler<T> = {}
 ) {
     constructor(
-        textMatcher: TextMatcher,
+        textMatcher: TextMatcher<T>,
         matchStyle: SpanStyle? = SpanStyle(
             textDecoration = TextDecoration.Underline
         ),
-        onClick: MatchClickHandler = {}
+        onClick: MatchClickHandler<T> = {}
     ) : this(
         textMatcher = textMatcher,
         matchStyleProvider = { matchStyle },
@@ -84,8 +84,8 @@ class TextRule(
     )
 
     fun copy(
-        textMatcher: TextMatcher = this.textMatcher,
-        matchClickHandler: MatchClickHandler = this.onClick
+        textMatcher: TextMatcher<T> = this.textMatcher,
+        matchClickHandler: MatchClickHandler<T> = this.onClick
     ) = TextRule(
         textMatcher = textMatcher,
         matchStyleProvider = matchStyleProvider,
@@ -93,9 +93,9 @@ class TextRule(
     )
 
     fun copy(
-        textMatcher: TextMatcher = this.textMatcher,
-        matchStyleProvider: MatchStyleProvider = this.matchStyleProvider,
-        matchClickHandler: MatchClickHandler = this.onClick
+        textMatcher: TextMatcher<T> = this.textMatcher,
+        matchStyleProvider: MatchStyleProvider<T> = this.matchStyleProvider,
+        matchClickHandler: MatchClickHandler<T> = this.onClick
     ) = TextRule(
         textMatcher = textMatcher,
         matchStyleProvider = matchStyleProvider,
@@ -103,9 +103,9 @@ class TextRule(
     )
 
     fun copy(
-        textMatcher: TextMatcher = this.textMatcher,
+        textMatcher: TextMatcher<T> = this.textMatcher,
         matchStyle: SpanStyle? = null,
-        matchClickHandler: MatchClickHandler = this.onClick
+        matchClickHandler: MatchClickHandler<T> = this.onClick
     ) = TextRule(
         textMatcher = textMatcher,
         matchStyleProvider = { matchStyle },
@@ -113,15 +113,15 @@ class TextRule(
     )
 }
 
-internal fun Collection<TextRule>.getAllMatches(text: String): List<TextMatchResult> =
+internal fun <T> Collection<TextRule<T>>.getAllMatches(text: String): List<TextMatchResult<T>> =
     flatMap { rule ->
         rule.textMatcher.apply(text).map { match ->
-            TextMatchResult.fromSimpleTextMatchResult(match, rule, text)
+            TextMatchResult(rule, text, match)
         }
     }.pruneOverlaps()
 
 // from https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/text/util/Linkify.java;l=737;drc=4f9480b13d3cab52255608ac5913922ca4269ac5
-private fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
+private fun <T> List<TextMatchResult<T>>.pruneOverlaps(): List<TextMatchResult<T>> {
     val sortedList = sortedWith { a, b ->
         if (a.start < b.start) {
             return@sortedWith -1
@@ -169,7 +169,7 @@ private fun List<TextMatchResult>.pruneOverlaps(): List<TextMatchResult> {
     return sortedList
 }
 
-internal fun List<TextMatchResult>.annotateString(text: String): AnnotatedString {
+internal fun <T> List<TextMatchResult<T>>.annotateString(text: String): AnnotatedString {
     val annotatedString = AnnotatedString.Builder(text)
     forEach { match ->
         val style = match.rule.matchStyleProvider(match)
@@ -187,7 +187,7 @@ internal fun List<TextMatchResult>.annotateString(text: String): AnnotatedString
     return annotatedString.toAnnotatedString()
 }
 
-fun Collection<TextRule>.annotateString(text: String): AnnotatedString {
+fun <T> Collection<TextRule<T>>.annotateString(text: String): AnnotatedString {
     val matches = getAllMatches(text)
     return matches.annotateString(text)
 }

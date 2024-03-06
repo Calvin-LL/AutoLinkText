@@ -182,11 +182,11 @@ fun MainScreen() {
                 textRules = listOf(
                     TextRule(
                         textMatcher = TextMatcher.FunctionMatcher {
-                            val matches = mutableListOf<SimpleTextMatchResult>()
+                            val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
                             var currentWordStart = 0
                             "$it ".forEachIndexed { index, char ->
                                 if (char.isWhitespace()) {
-                                    val match = SimpleTextMatchResult.TextMatch(
+                                    val match = SimpleTextMatchResult(
                                         start = currentWordStart,
                                         end = index,
                                     )

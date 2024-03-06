@@ -4,41 +4,45 @@ import androidx.compose.runtime.Composable
 
 expect object TextMatcherDefaults {
     @NotForAndroid
-    fun webUrl(contextData: ContextData): TextMatcher
+    fun webUrl(contextData: ContextData): TextMatcher<Any?>
 
     @NotForAndroid
-    fun emailAddress(contextData: ContextData): TextMatcher
+    fun emailAddress(contextData: ContextData): TextMatcher<Any?>
 
     @NotForAndroid
-    fun phoneNumber(contextData: ContextData): TextMatcher
+    fun phoneNumber(contextData: ContextData): TextMatcher<Any?>
 
     @Composable
-    fun webUrl(): TextMatcher
+    fun webUrl(): TextMatcher<Any?>
 
     @Composable
-    fun emailAddress(): TextMatcher
+    fun emailAddress(): TextMatcher<Any?>
 
     @Composable
-    fun phoneNumber(): TextMatcher
+    fun phoneNumber(): TextMatcher<Any?>
 }
 
 /**
  * A [TextMatcher] is used to match text in a string.
  */
-sealed class TextMatcher {
-    abstract fun apply(text: String): List<SimpleTextMatchResult>
+sealed class TextMatcher<out T> {
+    abstract fun apply(text: String): List<SimpleTextMatchResult<T>>
 
     /**
      * A [TextMatcher] that matches a [Regex] in the text.
      */
     class RegexMatcher(
         val regex: Regex,
-        val matchFilter: MatchFilter = MatchFilterDefaults.NoOp,
-    ) : TextMatcher() {
-        override fun apply(text: String): List<SimpleTextMatchResult> {
-            val matches = mutableListOf<SimpleTextMatchResult>()
+        val matchFilter: MatchFilter<MatchResult> = MatchFilterDefaults.NoOp,
+    ) : TextMatcher<MatchResult>() {
+        override fun apply(text: String): List<SimpleTextMatchResult<MatchResult>> {
+            val matches = mutableListOf<SimpleTextMatchResult<MatchResult>>()
             regex.findAll(text).forEach {
-                val result = SimpleTextMatchResult.RegexMatch(it)
+                val result = SimpleTextMatchResult(
+                    start = it.range.first,
+                    end = it.range.last + 1,
+                    it
+                )
                 if (matchFilter(text, result)) {
                     matches.add(result)
                 }
@@ -52,13 +56,13 @@ sealed class TextMatcher {
      */
     class StringMatcher(
         val string: String,
-        val matchFilter: MatchFilter = MatchFilterDefaults.NoOp,
-    ) : TextMatcher() {
-        override fun apply(text: String): List<SimpleTextMatchResult> {
-            val matches = mutableListOf<SimpleTextMatchResult>()
+        val matchFilter: MatchFilter<Nothing?> = MatchFilterDefaults.NoOp,
+    ) : TextMatcher<Nothing?>() {
+        override fun apply(text: String): List<SimpleTextMatchResult<Nothing?>> {
+            val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
             var index = text.indexOf(string)
             while (index != -1) {
-                val result = SimpleTextMatchResult.TextMatch(index, index + string.length)
+                val result = SimpleTextMatchResult(index, index + string.length)
                 if (matchFilter(text, result)) {
                     matches.add(result)
                 }
@@ -71,8 +75,8 @@ sealed class TextMatcher {
     /**
      * A [TextMatcher] that matches based on a function.
      */
-    class FunctionMatcher(val function: (String) -> List<SimpleTextMatchResult>) : TextMatcher() {
-        override fun apply(text: String): List<SimpleTextMatchResult> {
+    class FunctionMatcher<out T>(val function: (String) -> List<SimpleTextMatchResult<T>>) : TextMatcher<T>() {
+        override fun apply(text: String): List<SimpleTextMatchResult<T>> {
             return function(text)
         }
     }

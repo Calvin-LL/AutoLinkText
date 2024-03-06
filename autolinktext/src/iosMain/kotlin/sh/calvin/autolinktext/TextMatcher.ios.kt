@@ -13,7 +13,7 @@ import platform.Foundation.matchesInString
 
 actual object TextMatcherDefaults {
     @OptIn(ExperimentalForeignApi::class)
-    actual fun webUrl(contextData: ContextData): TextMatcher {
+    actual fun webUrl(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             val detector = NSDataDetector(types = NSTextCheckingTypeLink, error = null)
             val range = NSMakeRange(0u, text.length.toULong())
@@ -28,7 +28,7 @@ actual object TextMatcherDefaults {
                     match.range.useContents {
                         val start = location.toInt()
                         val end = start + length.toInt()
-                        SimpleTextMatchResult.TextMatch(start, end)
+                        SimpleTextMatchResult(start, end, match.URL)
                     }
                 } else {
                     null
@@ -38,7 +38,7 @@ actual object TextMatcherDefaults {
     }
 
     @OptIn(ExperimentalForeignApi::class)
-    actual fun emailAddress(contextData: ContextData): TextMatcher {
+    actual fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             val detector = NSDataDetector(types = NSTextCheckingTypeLink, error = null)
             val range = NSMakeRange(0u, text.length.toULong())
@@ -53,7 +53,7 @@ actual object TextMatcherDefaults {
                     match.range.useContents {
                         val start = location.toInt()
                         val end = start + length.toInt()
-                        SimpleTextMatchResult.TextMatch(start, end)
+                        SimpleTextMatchResult(start, end, match.URL)
                     }
                 } else {
                     null
@@ -63,7 +63,7 @@ actual object TextMatcherDefaults {
     }
 
     @OptIn(ExperimentalForeignApi::class)
-    actual fun phoneNumber(contextData: ContextData): TextMatcher {
+    actual fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             val detector = NSDataDetector(types = NSTextCheckingTypePhoneNumber, error = null)
             val range = NSMakeRange(0u, text.length.toULong())
@@ -78,7 +78,7 @@ actual object TextMatcherDefaults {
                     match.range.useContents {
                         val start = location.toInt()
                         val end = start + length.toInt()
-                        SimpleTextMatchResult.TextMatch(start, end)
+                        SimpleTextMatchResult(start, end, match.URL)
                     }
                 } else {
                     null
@@ -88,11 +88,11 @@ actual object TextMatcherDefaults {
     }
 
     @Composable
-    actual fun webUrl(): TextMatcher = webUrl(NullContextData)
+    actual fun webUrl() = webUrl(NullContextData)
 
     @Composable
-    actual fun emailAddress(): TextMatcher = emailAddress(NullContextData)
+    actual fun emailAddress() = emailAddress(NullContextData)
 
     @Composable
-    actual fun phoneNumber(): TextMatcher = phoneNumber(NullContextData)
+    actual fun phoneNumber() = phoneNumber(NullContextData)
 }

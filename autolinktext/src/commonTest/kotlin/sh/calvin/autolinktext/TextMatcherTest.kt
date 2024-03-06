@@ -47,8 +47,8 @@ class TextMatcherTest {
         val text = "123abc456def789"
         val matcher = TextMatcher.FunctionMatcher {
             listOf(
-                SimpleTextMatchResult.TextMatch(3, 6),
-                SimpleTextMatchResult.TextMatch(6, 9)
+                SimpleTextMatchResult(3, 6),
+                SimpleTextMatchResult(6, 9)
             )
         }
         val matches = matcher.apply(text)

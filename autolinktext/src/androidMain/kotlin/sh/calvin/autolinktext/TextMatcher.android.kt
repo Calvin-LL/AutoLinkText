@@ -13,12 +13,12 @@ import java.util.regex.Pattern
 private fun matchPattern(
     text: String,
     pattern: Pattern,
-    matchFilter: MatchFilter = MatchFilterDefaults.NoOp
-): List<SimpleTextMatchResult> {
+    matchFilter: MatchFilter<Any?> = MatchFilterDefaults.NoOp
+): List<SimpleTextMatchResult<Any?>> {
     val matcher = pattern.matcher(text)
-    val matches = mutableListOf<SimpleTextMatchResult>()
+    val matches = mutableListOf<SimpleTextMatchResult<Any?>>()
     while (matcher.find()) {
-        val result = SimpleTextMatchResult.TextMatch(
+        val result = SimpleTextMatchResult(
             matcher.start(),
             matcher.end()
         )
@@ -31,20 +31,20 @@ private fun matchPattern(
 
 actual object TextMatcherDefaults {
     @SuppressLint("RestrictedApi")
-    actual fun webUrl(contextData: ContextData): TextMatcher {
+    actual fun webUrl(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             matchPattern(text, PatternsCompat.AUTOLINK_WEB_URL, MatchFilterDefaults.WebUrls)
         }
     }
 
     @SuppressLint("RestrictedApi")
-    actual fun emailAddress(contextData: ContextData): TextMatcher {
+    actual fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             matchPattern(text, PatternsCompat.AUTOLINK_EMAIL_ADDRESS)
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): TextMatcher {
+    actual fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         val simCountryIso = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             (contextData as AndroidContextData).context.getSystemService(TelephonyManager::class.java).simCountryIso.let {
                 if (it.isNotEmpty()) it.uppercase() else null
@@ -62,7 +62,7 @@ actual object TextMatcherDefaults {
             )
 
             matches.mapNotNull {
-                val result = SimpleTextMatchResult.TextMatch(it.start(), it.end())
+                val result = SimpleTextMatchResult(it.start(), it.end())
                 if (MatchFilterDefaults.PhoneNumber(text, result)) result else null
             }
         }

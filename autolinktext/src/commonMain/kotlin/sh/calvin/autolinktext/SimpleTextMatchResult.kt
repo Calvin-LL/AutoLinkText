@@ -1,44 +1,13 @@
 package sh.calvin.autolinktext
 
-sealed class SimpleTextMatchResult {
-    companion object {
-        fun fromTextMatchResult(textMatchResult: TextMatchResult) =
-            when (textMatchResult) {
-                is TextMatchResult.TextMatch -> TextMatch(
-                    textMatchResult.start,
-                    textMatchResult.end
-                )
+open class SimpleTextMatchResult<out T>(
+    val start: Int,
+    val end: Int,
+    val data: T
+)
 
-                is TextMatchResult.RegexMatch -> RegexMatch(textMatchResult.matchResult)
-            }
-    }
+fun SimpleTextMatchResult(start: Int, end: Int) = SimpleTextMatchResult(start, end, null)
 
-    /**
-     * The index of the first character in s that was
-     * matched by the pattern - inclusive
-     */
-    abstract val start: Int
-
-    /**
-     * The index of the last character in s that was
-     * matched - exclusive
-     */
-    abstract val end: Int
-
-    class TextMatch(override val start: Int, override val end: Int) :
-        SimpleTextMatchResult()
-
-    class RegexMatch(
-        val matchResult: MatchResult,
-    ) :
-        SimpleTextMatchResult() {
-        override val start: Int
-            get() = matchResult.range.first
-        override val end: Int
-            get() = matchResult.range.last + 1
-    }
-}
-
-fun String.slice(match: SimpleTextMatchResult): String {
+fun String.slice(match: SimpleTextMatchResult<*>): String {
     return substring(match.start, match.end)
 }
