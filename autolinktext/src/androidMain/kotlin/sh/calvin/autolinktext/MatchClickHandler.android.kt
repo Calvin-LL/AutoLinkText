@@ -10,8 +10,10 @@ import androidx.core.net.toUri
 actual object MatchClickHandlerDefaults {
     actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> =
         {
-            val url = it.matchedText
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            val url = it.matchedText.toUri().let {
+                if (it.scheme == null) it.buildUpon().scheme("https").build() else it
+            }
+            val intent = Intent(Intent.ACTION_VIEW, url)
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
@@ -31,8 +33,6 @@ actual object MatchClickHandlerDefaults {
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
             (contextData as AndroidContextData).context.startActivity(intent)
         }
-
-
 
     @Composable
     actual fun webUrl() = webUrl(AndroidContextData(LocalContext.current))
