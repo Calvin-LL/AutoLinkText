@@ -1,3 +1,3 @@
 package sh.calvin.autolinktext
 
-actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {}
+internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {}

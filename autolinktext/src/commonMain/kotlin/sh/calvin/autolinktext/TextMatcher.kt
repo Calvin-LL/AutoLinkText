@@ -28,7 +28,7 @@ interface TextMatcherDefaultsInterface {
     fun phoneNumber() = phoneNumber(NullContextData)
 }
 
-expect fun getMatcherDefaults(): TextMatcherDefaultsInterface
+internal expect fun getMatcherDefaults(): TextMatcherDefaultsInterface
 
 val TextMatcherDefaults = getMatcherDefaults()
 

@@ -90,4 +90,4 @@ object IosTextMatcherDefaults : TextMatcherDefaultsInterface {
     }
 }
 
-actual fun getMatcherDefaults(): TextMatcherDefaultsInterface = IosTextMatcherDefaults
+internal actual fun getMatcherDefaults(): TextMatcherDefaultsInterface = IosTextMatcherDefaults

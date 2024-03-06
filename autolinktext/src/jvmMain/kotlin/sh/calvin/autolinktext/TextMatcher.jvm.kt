@@ -3,7 +3,7 @@ package sh.calvin.autolinktext
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import java.util.Locale
 
-actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
+internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
     @NotForAndroid
     override fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->

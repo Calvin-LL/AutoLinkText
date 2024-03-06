@@ -29,7 +29,7 @@ private fun matchPattern(
     return matches
 }
 
-actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
+internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
     @NotForAndroid
     @SuppressLint("RestrictedApi")
     override fun webUrl(contextData: ContextData): TextMatcher<Any?> {
