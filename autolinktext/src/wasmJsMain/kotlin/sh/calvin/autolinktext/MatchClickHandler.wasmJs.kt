@@ -7,7 +7,7 @@ actual object MatchClickHandlerDefaults {
     actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             var url = it.matchedText
-            val protocolRegex = Regex("^.*://")
+            val protocolRegex = Regex("^\\S+://.+$")
             val hasProtocol = protocolRegex.matches(url)
             if (!hasProtocol) {
                 url = "https://$url"
