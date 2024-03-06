@@ -2,6 +2,8 @@ package sh.calvin.autolinktext
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 
 interface ContextData
 
@@ -23,19 +25,19 @@ object TextRuleDefaults {
     @NotForAndroid
     fun webUrl(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.webUrl(contextData),
-        matchClickHandler = MatchClickHandlerDefaults.webUrl(contextData),
+        onClick = MatchClickHandlerDefaults.webUrl(contextData),
     )
 
     @NotForAndroid
     fun emailAddress(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.emailAddress(contextData),
-        matchClickHandler = MatchClickHandlerDefaults.emailAddress(contextData),
+        onClick = MatchClickHandlerDefaults.emailAddress(contextData),
     )
 
     @NotForAndroid
     fun phoneNumber(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.phoneNumber(contextData),
-        matchClickHandler = MatchClickHandlerDefaults.phoneNumber(contextData),
+        onClick = MatchClickHandlerDefaults.phoneNumber(contextData),
     )
 
     @Composable
@@ -56,21 +58,58 @@ object TextRuleDefaults {
  *
  * @param textMatcher The matcher to find the text in the input.
  * @param matchStyleProvider The provider to provide style for the matched text.
- * @param matchClickHandler The handler to handle click events on the matched text.
+ * @param onClick The handler to handle click events on the matched text.
  */
 class TextRule(
     val textMatcher: TextMatcher,
-    val matchStyleProvider: MatchStyleProvider = MatchStyleProviderDefaults.Underline,
-    val matchClickHandler: MatchClickHandler = MatchClickHandlerDefaults.NoOp
+    val matchStyleProvider: MatchStyleProvider,
+    val onClick: MatchClickHandler = {}
 ) {
+    constructor(
+        textMatcher: TextMatcher,
+        matchStyle: SpanStyle? = SpanStyle(
+            textDecoration = TextDecoration.Underline
+        ),
+        onClick: MatchClickHandler = {}
+    ) : this(
+        textMatcher = textMatcher,
+        matchStyleProvider = { matchStyle },
+        onClick = onClick
+    )
+
+    fun copy() = TextRule(
+        textMatcher = textMatcher,
+        matchStyleProvider = matchStyleProvider,
+        onClick = onClick
+    )
+
     fun copy(
         textMatcher: TextMatcher = this.textMatcher,
-        matchStyleProvider: MatchStyleProvider = this.matchStyleProvider,
-        matchClickHandler: MatchClickHandler = this.matchClickHandler
+        matchClickHandler: MatchClickHandler = this.onClick
     ) = TextRule(
         textMatcher = textMatcher,
         matchStyleProvider = matchStyleProvider,
-        matchClickHandler = matchClickHandler
+        onClick = matchClickHandler
+    )
+
+    fun copy(
+        textMatcher: TextMatcher = this.textMatcher,
+        matchStyleProvider: MatchStyleProvider = this.matchStyleProvider,
+        matchClickHandler: MatchClickHandler = this.onClick
+    ) = TextRule(
+        textMatcher = textMatcher,
+        matchStyleProvider = matchStyleProvider,
+        onClick = matchClickHandler
+    )
+
+    fun copy(
+        textMatcher: TextMatcher = this.textMatcher,
+        matchStyle: SpanStyle? = null,
+        matchClickHandler: MatchClickHandler = this.onClick
+    ) = TextRule(
+        textMatcher = textMatcher,
+        matchStyleProvider = { matchStyle },
+        onClick = matchClickHandler
     )
 }
 

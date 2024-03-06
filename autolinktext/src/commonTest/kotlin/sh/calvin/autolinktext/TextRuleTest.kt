@@ -2,6 +2,8 @@ package sh.calvin.autolinktext
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 
 class TextRuleTest {
     @Test
@@ -25,25 +27,37 @@ class TextRuleTest {
     }
 
     @Test
-    fun testCopy() {
+    fun testCopy1() {
         val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider: MatchStyleProvider = { _ -> null }
-        val clickHandler: MatchClickHandler = { _ -> }
+        val styleProvider: MatchStyleProvider = { null }
+        val clickHandler: MatchClickHandler = { }
         val rule = TextRule(
             textMatcher = textMatcher,
             matchStyleProvider = styleProvider,
-            matchClickHandler = clickHandler
+            onClick = clickHandler
         )
         val copy = rule.copy()
 
         assertEquals(rule.textMatcher, copy.textMatcher)
         assertEquals(rule.matchStyleProvider, copy.matchStyleProvider)
-        assertEquals(rule.matchClickHandler, copy.matchClickHandler)
+        assertEquals(rule.onClick, copy.onClick)
+    }
+
+    @Test
+    fun testCopy2() {
+        val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
+        val styleProvider1: MatchStyleProvider = { null }
+        val clickHandler1: MatchClickHandler = { }
+        val rule1 = TextRule(
+            textMatcher = textMatcher1,
+            matchStyleProvider = styleProvider1,
+            onClick = clickHandler1
+        )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val styleProvider2: MatchStyleProvider = { _ -> null }
-        val clickHandler2: MatchClickHandler = { _ -> }
-        val rule2 = rule.copy(
+        val styleProvider2: MatchStyleProvider = { null }
+        val clickHandler2: MatchClickHandler = { }
+        val rule2 = rule1.copy(
             textMatcher = textMatcher2,
             matchStyleProvider = styleProvider2,
             matchClickHandler = clickHandler2
@@ -51,7 +65,54 @@ class TextRuleTest {
 
         assertEquals(textMatcher2, rule2.textMatcher)
         assertEquals(styleProvider2, rule2.matchStyleProvider)
-        assertEquals(clickHandler2, rule2.matchClickHandler)
+        assertEquals(clickHandler2, rule2.onClick)
+    }
+
+    @Test
+    fun testCopy3() {
+        val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
+        val styleProvider1: MatchStyleProvider = { null }
+        val clickHandler1: MatchClickHandler = { }
+        val rule1 = TextRule(
+            textMatcher = textMatcher1,
+            matchStyleProvider = styleProvider1,
+            onClick = clickHandler1
+        )
+
+        val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
+        val clickHandler2: MatchClickHandler = { }
+        val rule2 = rule1.copy(
+            textMatcher = textMatcher2,
+            matchStyle = null,
+            matchClickHandler = clickHandler2
+        )
+
+        assertEquals(textMatcher2, rule2.textMatcher)
+        assertNotEquals(styleProvider1, rule2.matchStyleProvider)
+        assertEquals(clickHandler2, rule2.onClick)
+    }
+
+    @Test
+    fun testCopy4() {
+        val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
+        val styleProvider1: MatchStyleProvider = { null }
+        val clickHandler1: MatchClickHandler = { }
+        val rule1 = TextRule(
+            textMatcher = textMatcher1,
+            matchStyleProvider = styleProvider1,
+            onClick = clickHandler1
+        )
+
+        val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
+        val clickHandler2: MatchClickHandler = { }
+        val rule2 = rule1.copy(
+            textMatcher = textMatcher2,
+            matchClickHandler = clickHandler2
+        )
+
+        assertEquals(textMatcher2, rule2.textMatcher)
+        assertEquals(styleProvider1, rule2.matchStyleProvider)
+        assertEquals(clickHandler2, rule2.onClick)
     }
 
     @OptIn(NotForAndroid::class)

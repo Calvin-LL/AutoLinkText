@@ -12,7 +12,7 @@ internal actual fun platformWebUrl(): TextRule {
 
     return TextRule(
         textMatcher = TextMatcherDefaults.webUrl(context),
-        matchClickHandler = MatchClickHandlerDefaults.webUrl(context),
+        onClick = MatchClickHandlerDefaults.webUrl(context),
     )
 }
 
@@ -22,7 +22,7 @@ internal actual fun platformEmailAddress(): TextRule {
 
     return TextRule(
         textMatcher = TextMatcherDefaults.emailAddress(context),
-        matchClickHandler = MatchClickHandlerDefaults.emailAddress(context),
+        onClick = MatchClickHandlerDefaults.emailAddress(context),
     )
 }
 
@@ -32,7 +32,7 @@ internal actual fun platformPhoneNumber(): TextRule {
 
     return TextRule(
         textMatcher = TextMatcherDefaults.phoneNumber(context),
-        matchClickHandler = MatchClickHandlerDefaults.phoneNumber(context),
+        onClick = MatchClickHandlerDefaults.phoneNumber(context),
     )
 }
 
