@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 typealias MatchClickHandler<T> = (match: TextMatchResult<T>) -> Unit
 
-expect object MatchClickHandlerDefaults {
+interface MatchClickHandlerDefaultsInterface {
     @NotForAndroid
     fun webUrl(contextData: ContextData): MatchClickHandler<Any?>
 
@@ -14,15 +14,22 @@ expect object MatchClickHandlerDefaults {
     @NotForAndroid
     fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?>
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun webUrl(): MatchClickHandler<Any?>
+    fun webUrl() = webUrl(NullContextData)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun emailAddress(): MatchClickHandler<Any?>
+    fun emailAddress() = emailAddress(NullContextData)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun phoneNumber(): MatchClickHandler<Any?>
+    fun phoneNumber() = phoneNumber(NullContextData)
 }
+
+internal expect fun getMatchClickHandlerDefaults(): MatchClickHandlerDefaultsInterface
+
+val MatchClickHandlerDefaults = getMatchClickHandlerDefaults()
 
 /**
  * only allow digits and "+"

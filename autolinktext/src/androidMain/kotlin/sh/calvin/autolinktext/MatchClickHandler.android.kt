@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 
-actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> =
+internal actual fun getMatchClickHandlerDefaults() = object : MatchClickHandlerDefaultsInterface {
+    @NotForAndroid
+    override fun webUrl(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val url = it.matchedText.toUri().let {
                 if (it.scheme == null) it.buildUpon().scheme("https").build() else it
@@ -17,7 +18,8 @@ actual object MatchClickHandlerDefaults {
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> =
+    @NotForAndroid
+    override fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val email = it.matchedText
             val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -27,19 +29,23 @@ actual object MatchClickHandlerDefaults {
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> =
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> =
         {
             val phone = PhoneNumberUtils.normalizeNumber(it.matchedText)
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
             (contextData as AndroidContextData).context.startActivity(intent)
         }
 
+    @NotForAndroid
     @Composable
-    actual fun webUrl() = webUrl(AndroidContextData(LocalContext.current))
+    override fun webUrl() = webUrl(AndroidContextData(LocalContext.current))
 
+    @NotForAndroid
     @Composable
-    actual fun emailAddress() = emailAddress(AndroidContextData(LocalContext.current))
+    override fun emailAddress() = emailAddress(AndroidContextData(LocalContext.current))
 
+    @NotForAndroid
     @Composable
-    actual fun phoneNumber() = phoneNumber(AndroidContextData(LocalContext.current))
+    override fun phoneNumber() = phoneNumber(AndroidContextData(LocalContext.current))
 }

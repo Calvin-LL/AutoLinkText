@@ -1,14 +1,13 @@
 package sh.calvin.autolinktext
 
-import androidx.compose.runtime.Composable
 import co.touchlab.kermit.Logger
 import java.awt.Desktop
 import java.net.URI
-import java.net.URL
 
-actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
-        return {result ->
+internal actual fun getMatchClickHandlerDefaults() = object : MatchClickHandlerDefaultsInterface {
+    @NotForAndroid
+    override fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
+        return { result ->
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.BROWSE)
             ) {
@@ -26,7 +25,8 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
+    @NotForAndroid
+    override fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.MAIL)
@@ -38,7 +38,8 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                     .isSupported(Desktop.Action.BROWSE)
@@ -49,13 +50,4 @@ actual object MatchClickHandlerDefaults {
             }
         }
     }
-
-    @Composable
-    actual fun webUrl() = webUrl(NullContextData)
-
-    @Composable
-    actual fun emailAddress() = emailAddress(NullContextData)
-
-    @Composable
-    actual fun phoneNumber() = phoneNumber(NullContextData)
 }

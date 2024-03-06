@@ -1,13 +1,13 @@
 package sh.calvin.autolinktext
 
-import androidx.compose.runtime.Composable
 import co.touchlab.kermit.Logger
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLComponents
 import platform.UIKit.UIApplication
 
-actual object MatchClickHandlerDefaults {
-    actual fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
+object IosMatchClickHandlerDefaults : MatchClickHandlerDefaultsInterface {
+    @NotForAndroid
+    override fun webUrl(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
                 val url = when (val data = it.data) {
@@ -27,7 +27,8 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
+    @NotForAndroid
+    override fun emailAddress(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
                 val url = when (val data = it.data) {
@@ -45,7 +46,8 @@ actual object MatchClickHandlerDefaults {
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): MatchClickHandler<Any?> {
         return {
             try {
                 val url = when (val data = it.data) {
@@ -62,13 +64,7 @@ actual object MatchClickHandlerDefaults {
             }
         }
     }
-
-    @Composable
-    actual fun webUrl() = webUrl(NullContextData)
-
-    @Composable
-    actual fun emailAddress() = emailAddress(NullContextData)
-
-    @Composable
-    actual fun phoneNumber() = phoneNumber(NullContextData)
 }
+
+internal actual fun getMatchClickHandlerDefaults(): MatchClickHandlerDefaultsInterface =
+    IosMatchClickHandlerDefaults
