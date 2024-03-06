@@ -29,7 +29,6 @@ class TextMatchResultTest {
         )
 
         assertEquals(rule, result.rule)
-        assertEquals(text, result.fullText)
         assertEquals(3, result.start)
         assertEquals(6, result.endExclusive)
         assertNull(result.data)
@@ -48,7 +47,6 @@ class TextMatchResultTest {
         )
 
         assertEquals(rule, result.rule)
-        assertEquals(text, result.fullText)
         assertEquals(3, result.start)
         assertEquals(6, result.endExclusive)
         assertNull(result.data)
@@ -68,7 +66,6 @@ class TextMatchResultTest {
         )
 
         assertEquals(rule, result.rule)
-        assertEquals(text, result.fullText)
         assertEquals(3, result.start)
         assertEquals(6, result.endExclusive)
         assertEquals(matchResult, result.data)
