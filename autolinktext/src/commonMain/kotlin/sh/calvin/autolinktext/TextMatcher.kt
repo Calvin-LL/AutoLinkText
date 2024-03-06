@@ -50,7 +50,7 @@ sealed class TextMatcher<out T> {
             regex.findAll(text).forEach {
                 val result = SimpleTextMatchResult(
                     start = it.range.first,
-                    end = it.range.last + 1,
+                    endExclusive = it.range.last + 1,
                     it
                 )
                 if (matchFilter(text, result)) {

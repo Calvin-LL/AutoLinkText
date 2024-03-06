@@ -2,7 +2,6 @@ package sh.calvin.autolinktext
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class TextMatcherTest {
     @Test
@@ -14,11 +13,11 @@ class TextMatcherTest {
 
         assertEquals(3, matches.size)
         assertEquals(0, matches[0].start)
-        assertEquals(3, matches[0].end)
+        assertEquals(3, matches[0].endExclusive)
         assertEquals(6, matches[1].start)
-        assertEquals(9, matches[1].end)
+        assertEquals(9, matches[1].endExclusive)
         assertEquals(12, matches[2].start)
-        assertEquals(15, matches[2].end)
+        assertEquals(15, matches[2].endExclusive)
 
         assertEquals("123", text.slice(matches[0]))
         assertEquals("456", text.slice(matches[1]))
@@ -34,9 +33,9 @@ class TextMatcherTest {
 
         assertEquals(2, matches.size)
         assertEquals(3, matches[0].start)
-        assertEquals(6, matches[0].end)
+        assertEquals(6, matches[0].endExclusive)
         assertEquals(9, matches[1].start)
-        assertEquals(12, matches[1].end)
+        assertEquals(12, matches[1].endExclusive)
 
         assertEquals("abc", text.slice(matches[0]))
         assertEquals("abc", text.slice(matches[1]))
@@ -55,8 +54,8 @@ class TextMatcherTest {
 
         assertEquals(2, matches.size)
         assertEquals(3, matches[0].start)
-        assertEquals(6, matches[0].end)
+        assertEquals(6, matches[0].endExclusive)
         assertEquals(6, matches[1].start)
-        assertEquals(9, matches[1].end)
+        assertEquals(9, matches[1].endExclusive)
     }
 }

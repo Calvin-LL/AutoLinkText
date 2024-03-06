@@ -3,7 +3,6 @@ package sh.calvin.autolinktext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class TextMatchResultTest {
     @Test
@@ -32,7 +31,7 @@ class TextMatchResultTest {
         assertEquals(rule, result.rule)
         assertEquals(text, result.fullText)
         assertEquals(3, result.start)
-        assertEquals(6, result.end)
+        assertEquals(6, result.endExclusive)
         assertNull(result.data)
     }
 
@@ -51,7 +50,7 @@ class TextMatchResultTest {
         assertEquals(rule, result.rule)
         assertEquals(text, result.fullText)
         assertEquals(3, result.start)
-        assertEquals(6, result.end)
+        assertEquals(6, result.endExclusive)
         assertNull(result.data)
     }
 
@@ -71,7 +70,7 @@ class TextMatchResultTest {
         assertEquals(rule, result.rule)
         assertEquals(text, result.fullText)
         assertEquals(3, result.start)
-        assertEquals(6, result.end)
+        assertEquals(6, result.endExclusive)
         assertEquals(matchResult, result.data)
     }
 }

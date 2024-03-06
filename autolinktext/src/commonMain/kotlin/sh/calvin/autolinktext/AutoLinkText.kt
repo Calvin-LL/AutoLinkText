@@ -67,7 +67,7 @@ fun AutoLinkText(
         maxLines = maxLines,
         onTextLayout = onTextLayout,
     ) { offset ->
-        val match = matches.find { it.start <= offset && it.end > offset }
+        val match = matches.find { it.contains(offset) }
         match?.rule?.onClick?.invoke(match)
     }
 }

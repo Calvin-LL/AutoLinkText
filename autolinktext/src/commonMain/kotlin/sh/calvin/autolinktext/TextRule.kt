@@ -134,11 +134,11 @@ private fun <T> List<TextMatchResult<T>>.pruneOverlaps(): List<TextMatchResult<T
             return@sortedWith 1
         }
 
-        if (a.end < b.end) {
+        if (a.endExclusive < b.endExclusive) {
             return@sortedWith 1
         }
 
-        if (a.end > b.end) {
+        if (a.endExclusive > b.endExclusive) {
             return@sortedWith -1
         }
 
@@ -152,12 +152,12 @@ private fun <T> List<TextMatchResult<T>>.pruneOverlaps(): List<TextMatchResult<T
         val a = sortedList[i]
         val b = sortedList[i + 1]
         var remove = -1
-        if (a.start <= b.start && a.end > b.start) {
-            if (b.end <= a.end) {
+        if (a.start <= b.start && a.endExclusive > b.start) {
+            if (b.endExclusive <= a.endExclusive) {
                 remove = i + 1
-            } else if (a.end - a.start > b.end - b.start) {
+            } else if (a.endExclusive - a.start > b.endExclusive - b.start) {
                 remove = i + 1
-            } else if (a.end - a.start < b.end - b.start) {
+            } else if (a.endExclusive - a.start < b.endExclusive - b.start) {
                 remove = i
             }
             if (remove != -1) {
@@ -177,7 +177,7 @@ internal fun <T> List<TextMatchResult<T>>.annotateString(text: String): Annotate
     forEach { match ->
         val style = match.rule.matchStyleProvider(match)
         if (style != null) {
-            annotatedString.addStyle(style, match.start, match.end)
+            annotatedString.addStyle(style, match.start, match.endExclusive)
         }
 //        annotatedString.addStringAnnotation(
 //            match.textRule.name,

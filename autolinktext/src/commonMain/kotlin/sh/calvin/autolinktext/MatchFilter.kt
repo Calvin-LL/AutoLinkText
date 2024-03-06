@@ -50,7 +50,7 @@ object MatchFilterDefaults {
     val PhoneNumber: MatchFilter<Any?> = fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
         var digitCount = 0
 
-        for (i in match.start until match.end) {
+        for (i in match.start until match.endExclusive) {
             if (fullText[i].isDigit()) {
                 digitCount++
                 if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {

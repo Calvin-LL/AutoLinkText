@@ -3,7 +3,6 @@ package sh.calvin.autolinktext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.assertNull
 
 class TextRuleTest {
     @Test
@@ -21,7 +20,7 @@ class TextRuleTest {
 
         assertEquals(1, matches.size)
         assertEquals(0, matches[0].start)
-        assertEquals(4, matches[0].end)
+        assertEquals(4, matches[0].endExclusive)
         assertEquals("123a", text.slice(matches[0]))
         assertEquals(rules[0], matches[0].rule)
     }
