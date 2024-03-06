@@ -2,25 +2,35 @@ package sh.calvin.autolinktext
 
 import androidx.compose.runtime.Composable
 
-expect object TextMatcherDefaults {
+interface TextMatcherDefaultsInterface {
     @NotForAndroid
-    fun webUrl(contextData: ContextData): TextMatcher<Any?>
-
-    @NotForAndroid
-    fun emailAddress(contextData: ContextData): TextMatcher<Any?>
+    fun webUrl(contextData: ContextData): TextMatcher<Any?> =
+        TextMatcher.RegexMatcher(BackUpRegex.WebUrl, MatchFilterDefaults.WebUrls)
 
     @NotForAndroid
-    fun phoneNumber(contextData: ContextData): TextMatcher<Any?>
+    fun emailAddress(contextData: ContextData): TextMatcher<Any?> =
+        TextMatcher.RegexMatcher(BackUpRegex.Email)
 
-    @Composable
-    fun webUrl(): TextMatcher<Any?>
+    @NotForAndroid
+    fun phoneNumber(contextData: ContextData): TextMatcher<Any?> =
+        TextMatcher.RegexMatcher(BackUpRegex.PhoneNumber, MatchFilterDefaults.PhoneNumber)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun emailAddress(): TextMatcher<Any?>
+    fun webUrl() = webUrl(NullContextData)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun phoneNumber(): TextMatcher<Any?>
+    fun emailAddress() = emailAddress(NullContextData)
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    fun phoneNumber() = phoneNumber(NullContextData)
 }
+
+expect fun getMatcherDefaults(): TextMatcherDefaultsInterface
+
+val TextMatcherDefaults = getMatcherDefaults()
 
 /**
  * A [TextMatcher] is used to match text in a string.
@@ -75,7 +85,8 @@ sealed class TextMatcher<out T> {
     /**
      * A [TextMatcher] that matches based on a function.
      */
-    class FunctionMatcher<out T>(val function: (String) -> List<SimpleTextMatchResult<T>>) : TextMatcher<T>() {
+    class FunctionMatcher<out T>(val function: (String) -> List<SimpleTextMatchResult<T>>) :
+        TextMatcher<T>() {
         override fun apply(text: String): List<SimpleTextMatchResult<T>> {
             return function(text)
         }

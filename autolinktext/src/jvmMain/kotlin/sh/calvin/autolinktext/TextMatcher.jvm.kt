@@ -1,19 +1,11 @@
 package sh.calvin.autolinktext
 
-import androidx.compose.runtime.Composable
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import java.util.Locale
 
-actual object TextMatcherDefaults {
-    actual fun webUrl(contextData: ContextData): TextMatcher<Any?> {
-        return TextMatcher.RegexMatcher(BackUpRegex.WebUrl, MatchFilterDefaults.WebUrls)
-    }
-
-    actual fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
-        return TextMatcher.RegexMatcher(BackUpRegex.Email)
-    }
-
-    actual fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
+actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             val phoneUtil = PhoneNumberUtil.getInstance()
             val regionCode = Locale.getDefault().country
@@ -28,13 +20,4 @@ actual object TextMatcherDefaults {
             }
         }
     }
-
-    @Composable
-    actual fun webUrl() = webUrl(NullContextData)
-
-    @Composable
-    actual fun emailAddress() = emailAddress(NullContextData)
-
-    @Composable
-    actual fun phoneNumber() = phoneNumber(NullContextData)
 }

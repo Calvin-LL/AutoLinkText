@@ -6,47 +6,64 @@ import androidx.compose.ui.platform.LocalContext
 
 class AndroidContextData(val context: Context) : ContextData
 
-@Composable
-internal actual fun platformWebUrl(): TextRule<Any?> {
-    val context = AndroidContextData(context = LocalContext.current)
+internal actual fun getTextRuleDefaults() = object : TextRuleDefaultsInterface {
+    @NotForAndroid
+    override fun webUrl(contextData: ContextData): TextRule<Any?> {
+        assert(contextData is AndroidContextData) { "ContextData must be AndroidContextData" }
 
-    return TextRule(
-        textMatcher = TextMatcherDefaults.webUrl(context),
-        onClick = MatchClickHandlerDefaults.webUrl(context),
-    )
-}
+        return super.webUrl(contextData)
+    }
 
-@Composable
-internal actual fun platformEmailAddress(): TextRule<Any?> {
-    val context = AndroidContextData(context = LocalContext.current)
+    @NotForAndroid
+    override fun emailAddress(contextData: ContextData): TextRule<Any?> {
+        assert(contextData is AndroidContextData) { "ContextData must be AndroidContextData" }
 
-    return TextRule(
-        textMatcher = TextMatcherDefaults.emailAddress(context),
-        onClick = MatchClickHandlerDefaults.emailAddress(context),
-    )
-}
+        return super.emailAddress(contextData)
+    }
 
-@Composable
-internal actual fun platformPhoneNumber(): TextRule<Any?> {
-    val context = AndroidContextData(context = LocalContext.current)
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): TextRule<Any?> {
+        assert(contextData is AndroidContextData) { "ContextData must be AndroidContextData" }
 
-    return TextRule(
-        textMatcher = TextMatcherDefaults.phoneNumber(context),
-        onClick = MatchClickHandlerDefaults.phoneNumber(context),
-    )
-}
+        return super.phoneNumber(contextData)
+    }
 
-/**
- * This can be safely called on all platforms
- */
-@OptIn(NotForAndroid::class)
-@Composable
-actual fun platformDefaultList(): List<TextRule<Any?>> {
-    val context = AndroidContextData(context = LocalContext.current)
+    @NotForAndroid
+    override fun defaultList(contextData: ContextData): List<TextRule<Any?>> {
+        assert(contextData is AndroidContextData) { "ContextData must be AndroidContextData" }
 
-    return listOf(
-        TextRuleDefaults.webUrl(context),
-        TextRuleDefaults.emailAddress(context),
-        TextRuleDefaults.phoneNumber(context),
-    )
+        return super.defaultList(contextData)
+    }
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    override fun webUrl(): TextRule<Any?> {
+        val context = AndroidContextData(context = LocalContext.current)
+
+        return webUrl(context)
+    }
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    override fun emailAddress(): TextRule<Any?> {
+        val context = AndroidContextData(context = LocalContext.current)
+
+        return emailAddress(context)
+    }
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    override fun phoneNumber(): TextRule<Any?> {
+        val context = AndroidContextData(context = LocalContext.current)
+
+        return phoneNumber(context)
+    }
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    override fun defaultList(): List<TextRule<Any?>> {
+        val context = AndroidContextData(context = LocalContext.current)
+
+        return defaultList(context)
+    }
 }

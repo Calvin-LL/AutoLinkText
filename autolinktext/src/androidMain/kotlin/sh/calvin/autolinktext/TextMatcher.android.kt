@@ -29,22 +29,25 @@ private fun matchPattern(
     return matches
 }
 
-actual object TextMatcherDefaults {
+actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface {
+    @NotForAndroid
     @SuppressLint("RestrictedApi")
-    actual fun webUrl(contextData: ContextData): TextMatcher<Any?> {
+    override fun webUrl(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             matchPattern(text, PatternsCompat.AUTOLINK_WEB_URL, MatchFilterDefaults.WebUrls)
         }
     }
 
+    @NotForAndroid
     @SuppressLint("RestrictedApi")
-    actual fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
+    override fun emailAddress(contextData: ContextData): TextMatcher<Any?> {
         return TextMatcher.FunctionMatcher { text ->
             matchPattern(text, PatternsCompat.AUTOLINK_EMAIL_ADDRESS)
         }
     }
 
-    actual fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
+    @NotForAndroid
+    override fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         val simCountryIso = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             (contextData as AndroidContextData).context.getSystemService(TelephonyManager::class.java).simCountryIso.let {
                 if (it.isNotEmpty()) it.uppercase() else null
@@ -67,13 +70,4 @@ actual object TextMatcherDefaults {
             }
         }
     }
-
-    @Composable
-    actual fun webUrl() = webUrl(AndroidContextData(LocalContext.current))
-
-    @Composable
-    actual fun emailAddress() = emailAddress(AndroidContextData(LocalContext.current))
-
-    @Composable
-    actual fun phoneNumber() = phoneNumber(AndroidContextData(LocalContext.current))
 }

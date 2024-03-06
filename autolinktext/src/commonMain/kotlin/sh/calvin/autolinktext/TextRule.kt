@@ -9,19 +9,7 @@ interface ContextData
 
 val NullContextData: ContextData = object : ContextData {}
 
-@Composable
-internal expect fun platformWebUrl(): TextRule<Any?>
-
-@Composable
-internal expect fun platformEmailAddress(): TextRule<Any?>
-
-@Composable
-internal expect fun platformPhoneNumber(): TextRule<Any?>
-
-@Composable
-internal expect fun platformDefaultList(): List<TextRule<Any?>>
-
-object TextRuleDefaults {
+interface TextRuleDefaultsInterface {
     @NotForAndroid
     fun webUrl(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.webUrl(contextData),
@@ -40,18 +28,33 @@ object TextRuleDefaults {
         onClick = MatchClickHandlerDefaults.phoneNumber(contextData),
     )
 
-    @Composable
-    fun webUrl() = platformWebUrl()
+    @NotForAndroid
+    fun defaultList(contextData: ContextData = NullContextData) = listOf(
+        webUrl(contextData),
+        emailAddress(contextData),
+        phoneNumber(contextData),
+    )
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun emailAddress() = platformEmailAddress()
+    fun webUrl() = webUrl(NullContextData)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun phoneNumber() = platformPhoneNumber()
+    fun emailAddress() = emailAddress(NullContextData)
 
+    @OptIn(NotForAndroid::class)
     @Composable
-    fun defaultList(): List<TextRule<Any?>> = platformDefaultList()
+    fun phoneNumber() = phoneNumber(NullContextData)
+
+    @OptIn(NotForAndroid::class)
+    @Composable
+    fun defaultList() = defaultList(NullContextData)
 }
+
+internal expect fun getTextRuleDefaults(): TextRuleDefaultsInterface
+
+val TextRuleDefaults = getTextRuleDefaults()
 
 /**
  * A rule to match text and apply style and click handling.
