@@ -57,7 +57,7 @@ kotlin {
 }
 
 android {
-    namespace = "sh.calvin.autolinktext"
+    namespace = project.group.toString()
     compileSdk = 34
     defaultConfig {
         minSdk = 21
