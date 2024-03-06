@@ -3,8 +3,6 @@ package sh.calvin.autolinktext
 import android.annotation.SuppressLint
 import android.os.Build
 import android.telephony.TelephonyManager
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.util.PatternsCompat
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import java.util.Locale

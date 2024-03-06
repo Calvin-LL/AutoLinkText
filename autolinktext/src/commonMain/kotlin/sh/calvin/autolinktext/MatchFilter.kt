@@ -24,21 +24,22 @@ object MatchFilterDefaults {
      *  Filters out web URL matches that occur after an at-sign (@).  This is
      *  to prevent turning the domain name in an email address into a web link.
      */
-    val WebUrls: MatchFilter<Any?> = fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
-        if (match.start == 0) {
+    val WebUrls: MatchFilter<Any?> =
+        fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
+            if (match.start == 0) {
+                return true
+            }
+
+            if (fullText[match.start - 1] == '@') {
+                return false
+            }
+
+            if (fullText.slice(match).contains("@")) {
+                return false
+            }
+
             return true
         }
-
-        if (fullText[match.start - 1] == '@') {
-            return false
-        }
-
-        if (fullText.slice(match).contains("@")) {
-            return false
-        }
-
-        return true
-    }
 
     private const val PHONE_NUMBER_MINIMUM_DIGITS = 5
 
@@ -47,17 +48,18 @@ object MatchFilterDefaults {
      *  Filters out URL matches that don't have enough digits to be a
      *  phone number.
      */
-    val PhoneNumber: MatchFilter<Any?> = fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
-        var digitCount = 0
+    val PhoneNumber: MatchFilter<Any?> =
+        fun(fullText: String, match: SimpleTextMatchResult<*>): Boolean {
+            var digitCount = 0
 
-        for (i in match.start until match.endExclusive) {
-            if (fullText[i].isDigit()) {
-                digitCount++
-                if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {
-                    return true
+            for (i in match.start until match.endExclusive) {
+                if (fullText[i].isDigit()) {
+                    digitCount++
+                    if (digitCount >= PHONE_NUMBER_MINIMUM_DIGITS) {
+                        return true
+                    }
                 }
             }
+            return false
         }
-        return false
-    }
 }

@@ -196,7 +196,7 @@ fun MainScreen() {
                                     currentWordStart = index + 1
                                 }
                             }
-                            matches.filterIndexed { index, _ ->  index % 2 == 0 }
+                            matches.filterIndexed { index, _ -> index % 2 == 0 }
                         },
                         matchStyle = SpanStyle(color = Color.Blue),
                     ),

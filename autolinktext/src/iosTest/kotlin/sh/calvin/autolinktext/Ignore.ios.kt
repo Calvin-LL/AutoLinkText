@@ -3,10 +3,10 @@ package sh.calvin.autolinktext
 actual typealias IgnoreIos = kotlin.test.Ignore
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreJvm()
+actual annotation class IgnoreJvm
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreAndroid()
+actual annotation class IgnoreAndroid
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreWasmJs()
+actual annotation class IgnoreWasmJs

@@ -1,12 +1,12 @@
 package sh.calvin.autolinktext
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreIos()
+actual annotation class IgnoreIos
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreJvm()
+actual annotation class IgnoreJvm
 
 actual typealias IgnoreAndroid = org.junit.Ignore
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreWasmJs()
+actual annotation class IgnoreWasmJs
