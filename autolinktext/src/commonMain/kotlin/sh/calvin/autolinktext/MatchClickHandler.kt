@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 typealias MatchClickHandler = (match: TextMatchResult) -> Unit
 
 expect object MatchClickHandlerDefaults {
-    val NoOp: MatchClickHandler
-
     @NotForAndroid
     fun webUrl(contextData: ContextData): MatchClickHandler
 

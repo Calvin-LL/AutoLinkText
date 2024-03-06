@@ -8,7 +8,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 
 actual object MatchClickHandlerDefaults {
-    actual val NoOp: MatchClickHandler = { }
     actual fun webUrl(contextData: ContextData): MatchClickHandler =
         {
             val url = it.matchedText

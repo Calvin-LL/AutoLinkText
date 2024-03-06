@@ -7,7 +7,6 @@ import platform.Foundation.NSURLComponents
 import platform.UIKit.UIApplication
 
 actual object MatchClickHandlerDefaults {
-    actual val NoOp: MatchClickHandler = {}
     actual fun webUrl(contextData: ContextData): MatchClickHandler {
         return {
             try {

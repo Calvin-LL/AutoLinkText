@@ -7,7 +7,6 @@ import java.net.URI
 import java.net.URL
 
 actual object MatchClickHandlerDefaults {
-    actual val NoOp: MatchClickHandler = {}
     actual fun webUrl(contextData: ContextData): MatchClickHandler {
         return {result ->
             if (Desktop.isDesktopSupported() && Desktop.getDesktop()

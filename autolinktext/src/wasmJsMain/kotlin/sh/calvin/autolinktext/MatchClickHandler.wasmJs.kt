@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import kotlinx.browser.window
 
 actual object MatchClickHandlerDefaults {
-    actual val NoOp: MatchClickHandler = {}
     actual fun webUrl(contextData: ContextData): MatchClickHandler {
         return {
             var url = it.matchedText
