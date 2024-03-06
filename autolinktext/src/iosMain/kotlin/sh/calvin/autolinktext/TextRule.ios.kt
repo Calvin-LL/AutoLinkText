@@ -8,7 +8,8 @@ internal actual fun platformWebUrl(): TextRule = TextRuleDefaults.webUrl(NullCon
 
 @OptIn(NotForAndroid::class)
 @Composable
-internal actual fun platformEmailAddress(): TextRule = TextRuleDefaults.emailAddress(NullContextData)
+internal actual fun platformEmailAddress(): TextRule =
+    TextRuleDefaults.emailAddress(NullContextData)
 
 @OptIn(NotForAndroid::class)
 @Composable
