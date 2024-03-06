@@ -1,14 +1,14 @@
 # AutoLinkText
 
-AutoLinkText is a simple library that makes links, emails, and phone numbers clickable in your text in Jetpack Compose and Kotlin Compose Multiplatform.
+AutoLinkText is a simple library that makes links, emails, and phone numbers clickable in text in Jetpack Compose and Kotlin Compose Multiplatform.
 
-| Android                                                                                                                                                                                                      | iOS                                                                                                                                                                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/android-dark.png"><img alt="A screenshot of the demo app in Android" src="assets/android-light.png" style="max-width: 300px"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/ios-dark.png"><img alt="A screenshot of the demo app in iOS" src="assets/ios-light.png" style="max-width: 300px"></picture> |
+| Android                                                                                                                                                                                         | iOS                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/android-dark.png"><img alt="A screenshot of the demo app in Android" src="assets/android-light.png" width="320"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/ios-dark.png"><img alt="A screenshot of the demo app in iOS" src="assets/ios-light.png" width="320"></picture> |
 
-| Desktop                                                                                                                                                                                                      | Web                                                                                                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/desktop-dark.png"><img alt="A screenshot of the demo app in Desktop" src="assets/desktop-light.png" style="max-width: 300px"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/web-dark.png"><img alt="A screenshot of the demo app in Web" src="assets/web-light.png"  style="max-width: 300px"></picture> |
+| Desktop                                                                                                                                                                                         | Web                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/desktop-dark.png"><img alt="A screenshot of the demo app in Desktop" src="assets/desktop-light.png" width="320"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/web-dark.png"><img alt="A screenshot of the demo app in Web" src="assets/web-light.png" width="320"></picture> |
 
 ## Features
 
@@ -17,11 +17,12 @@ AutoLinkText is a simple library that makes links, emails, and phone numbers cli
 - Customizable styling for links
 - Customizable click listeners for links
 - Supports Compose Multiplatform (Android, iOS, Desktop/JVM, Wasm)
-- Highly customizable
 
 ## Usage
 
-### libs.versions.toml
+### Version Catalog
+
+If you're using Version Catalog, add the following to your `libs.versions.toml` file:
 
 ```toml
 [libraries]
@@ -31,7 +32,7 @@ autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "1.0.
 
 ### Gradle
 
-Add the following to your `build.gradle` file:
+If you're using Gradle instead add the following to your `build.gradle` file:
 
 #### Kotlin DSL
 
@@ -75,6 +76,8 @@ AutoLinkText(
 
 #### Customize Link Color
 
+You can override the default styling by mapping over the default list of rules and changing the `matchStyle` in each default rule.
+
 ```kotlin
 AutoLinkText(
     text = "...",
@@ -93,6 +96,8 @@ AutoLinkText(
 ```
 
 #### Make Your Own Rules
+
+Create your own rules by providing `TextRule`s with a `TextMatcher`, an optional `MatchStyle` for the matched text and an optional `onClick` lambda.
 
 ```kotlin
 AutoLinkText(
@@ -127,6 +132,8 @@ AutoLinkText(
 
 #### Match Dependent Styling
 
+Use `matchStyleProvider` to provide a `SpanStyle` based on the matched text.
+
 ```kotlin
 AutoLinkText(
     text = "Style the same rule differently like #hashtag1 and #hashtag2",
@@ -160,6 +167,8 @@ AutoLinkText(
 
 #### `TextRule`s don't have to be Clickable
 
+You can create `TextRule`s that are not clickable by not providing an `onClick` lambda.
+
 ```kotlin
 AutoLinkText(
     text = "This is very important",
@@ -176,6 +185,8 @@ AutoLinkText(
 ```
 
 #### Make Your Own Matcher
+
+Create your own matchers with `TextMatcher.FunctionMatcher` that takes the given text and returns a list of `SimpleTextMatchResult`s.
 
 ```kotlin
 AutoLinkText(
