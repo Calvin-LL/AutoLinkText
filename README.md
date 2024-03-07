@@ -25,6 +25,18 @@ AutoLinkText is a simple library that makes links, emails, and phone numbers cli
 If you're using Version Catalog, add the following to your `libs.versions.toml` file:
 
 ```toml
+[versions]
+#...
+autolinktext = "1.0.0"
+
+[libraries]
+#...
+autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version.ref = "autolinktext" }
+```
+
+or
+
+```toml
 [libraries]
 #...
 autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "1.0.0" }
