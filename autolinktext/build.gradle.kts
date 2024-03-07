@@ -39,19 +39,24 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(libs.libphonenumber)
             implementation(libs.kermit)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)
+            implementation(libs.libphonenumber)
         }
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.robolectric)
             }
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+
+        jvmMain.dependencies {
+            implementation(libs.libphonenumber)
         }
     }
 }
