@@ -52,7 +52,10 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(compose.desktop.common)
-            implementation(compose.desktop.currentOs)
+            implementation(compose.desktop.macos_x64)
+            implementation(compose.desktop.macos_arm64)
+            implementation(compose.desktop.windows_x64)
+            implementation(compose.desktop.linux_x64)
         }
     }
 }
