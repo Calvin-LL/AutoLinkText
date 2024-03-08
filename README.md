@@ -2,6 +2,10 @@
 
 AutoLinkText is a simple library that makes links, emails, and phone numbers clickable in text in Jetpack Compose and Kotlin Compose Multiplatform.
 
+## Motivation
+
+[`TextView`](https://developer.android.com/reference/android/widget/TextView) has [`autoLink`](https://developer.android.com/reference/android/widget/TextView#attr_android:autoLink) and [`Linkify`](https://developer.android.com/reference/android/text/util/Linkify) but Compose doesn't have an equivalent. This library aims to fill that gap.
+
 | Android                                                                                                                                                                                         | iOS                                                                                                                                                                                 |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/android-dark.png"><img alt="A screenshot of the demo app in Android" src="assets/android-light.png" width="320"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/ios-dark.png"><img alt="A screenshot of the demo app in iOS" src="assets/ios-light.png" width="320"></picture> |
@@ -12,7 +16,7 @@ AutoLinkText is a simple library that makes links, emails, and phone numbers cli
 
 ## Features
 
-- Make links, emails, and phone numbers clickable in your text
+- Make links, emails, and phone numbers clickable in your text out of the box
 - Create custom matchers for your own patterns (e.g. hashtags, mentions, etc.)
 - Customizable styling for links
 - Customizable click listeners for links
@@ -61,11 +65,6 @@ dependencies {
     implementation 'sh.calvin.autolinktext:autolinktext:1.1.0'
 }
 ```
-
-### Caveats
-
-- Google might be deprecating the `ClickableText` API in the future. (See [Google IssueTracker issue 323346994](https://issuetracker.google.com/issues/323346994)) I will try my best to keep this library up to date with the latest Compose APIs.
-- Accessibility is not great if your onClick function does something other than opening a link. Hopefully this gets fixed in the future. (See [Google IssueTracker issue 274486643](https://issuetracker.google.com/issues/274486643))
 
 ### Examples
 
@@ -240,6 +239,11 @@ AutoLinkText(
     )
 )
 ```
+
+## Caveats
+
+- Google seems to be working on replacing [`ClickableText`](<https://developer.android.com/reference/kotlin/androidx/compose/foundation/text/package-summary#ClickableText(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,androidx.compose.ui.text.TextStyle,kotlin.Boolean,androidx.compose.ui.text.style.TextOverflow,kotlin.Int,kotlin.Function1,kotlin.Function1)>) API with [`LinkAnnotation`](https://developer.android.com/reference/kotlin/androidx/compose/ui/text/LinkAnnotation) but it is not functional yet. I will try my best to keep this library up to date with the latest Compose APIs.
+- The default list of `TextRule`s are accessible. But at the moment accessibility is not great if you add `TextRule`s with onClick function that does something other than opening a link because of a bug with [`ClickableText`](<https://developer.android.com/reference/kotlin/androidx/compose/foundation/text/package-summary#ClickableText(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,androidx.compose.ui.text.TextStyle,kotlin.Boolean,androidx.compose.ui.text.style.TextOverflow,kotlin.Int,kotlin.Function1,kotlin.Function1)>). Hopefully this gets fixed in the future (See [Google IssueTracker issue 274486643](https://issuetracker.google.com/issues/274486643)).
 
 ## API
 
