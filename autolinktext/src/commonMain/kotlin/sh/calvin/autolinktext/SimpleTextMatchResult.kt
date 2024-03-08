@@ -3,7 +3,7 @@ package sh.calvin.autolinktext
 open class SimpleTextMatchResult<out T>(
     override val start: Int,
     override val endExclusive: Int,
-    val data: T
+    val data: T,
 ) : OpenEndRange<Int> {
     fun slice(text: String) = text.substring(start, endExclusive)
 }

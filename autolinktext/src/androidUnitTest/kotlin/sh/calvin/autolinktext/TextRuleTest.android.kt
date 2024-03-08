@@ -62,7 +62,7 @@ class AndroidTextRuleTest {
         val text = "test someone@example.com test"
         val rules = listOf(
             TextRuleDefaults.webUrl(contextData),
-            TextRuleDefaults.emailAddress(contextData)
+            TextRuleDefaults.emailAddress(contextData),
         )
         val matches = rules.getAllMatches(text)
 
@@ -86,7 +86,7 @@ class AndroidTextRuleTest {
         val rules = listOf(
             TextRuleDefaults.webUrl(contextData),
             TextRuleDefaults.emailAddress(contextData),
-            TextRuleDefaults.phoneNumber(contextData)
+            TextRuleDefaults.phoneNumber(contextData),
         )
         val matches = rules.getAllMatches(text)
 

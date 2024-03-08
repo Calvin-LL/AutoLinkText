@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 private fun matchPattern(
     text: String,
     pattern: Pattern,
-    matchFilter: MatchFilter<Any?> = MatchFilterDefaults.NoOp
+    matchFilter: MatchFilter<Any?> = MatchFilterDefaults.NoOp,
 ): List<SimpleTextMatchResult<Any?>> {
     val matcher = pattern.matcher(text)
     val matches = mutableListOf<SimpleTextMatchResult<Any?>>()
@@ -59,7 +59,7 @@ internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface
             val regionCode = simCountryIso ?: Locale.getDefault().country
             val matches = phoneUtil.findNumbers(
                 text,
-                regionCode, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE
+                regionCode, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE,
             )
 
             matches.mapNotNull {

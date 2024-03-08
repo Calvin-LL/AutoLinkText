@@ -11,7 +11,7 @@ internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface
             val regionCode = Locale.getDefault().country
             val matches = phoneUtil.findNumbers(
                 text,
-                regionCode, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE
+                regionCode, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE,
             )
 
             matches.mapNotNull {

@@ -19,7 +19,7 @@ class TextMatchResult<T>(
          * The full text that was matched against
          */
         fullText: String,
-        match: SimpleTextMatchResult<T>
+        match: SimpleTextMatchResult<T>,
     ) : this(rule, fullText.slice(match), match.start, match.endExclusive, match.data)
 }
 

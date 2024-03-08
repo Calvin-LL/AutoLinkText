@@ -3,6 +3,7 @@ package sh.calvin.autolinktext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 
 class TextRuleTest {
     @Test
@@ -26,20 +27,41 @@ class TextRuleTest {
     }
 
     @Test
+    fun testSecondaryConstructor() {
+        val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
+        val clickHandler: MatchClickHandler<Any?> = { }
+        val annotationProvider: MatchAnnotationProvider<Any?> = { null }
+        val rule = TextRule(
+            textMatcher = textMatcher,
+            style = null,
+            onClick = clickHandler,
+            annotationProvider = annotationProvider,
+        )
+
+        assertEquals(textMatcher, rule.textMatcher)
+        assertNull(rule.styleProvider(TextMatchResult(rule, "", 0, 0, null)))
+        assertEquals(clickHandler, rule.onClick)
+        assertEquals(annotationProvider, rule.annotationProvider)
+    }
+
+    @Test
     fun testCopy1() {
         val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
         val styleProvider: MatchStyleProvider<Any?> = { null }
         val clickHandler: MatchClickHandler<Any?> = { }
+        val annotationProvider: MatchAnnotationProvider<Any?> = { null }
         val rule = TextRule(
             textMatcher = textMatcher,
-            matchStyleProvider = styleProvider,
-            onClick = clickHandler
+            styleProvider = styleProvider,
+            onClick = clickHandler,
+            annotationProvider = annotationProvider,
         )
         val copy = rule.copy()
 
         assertEquals(rule.textMatcher, copy.textMatcher)
-        assertEquals(rule.matchStyleProvider, copy.matchStyleProvider)
+        assertEquals(rule.styleProvider, copy.styleProvider)
         assertEquals(rule.onClick, copy.onClick)
+        assertEquals(rule.annotationProvider, copy.annotationProvider)
     }
 
     @Test
@@ -47,24 +69,29 @@ class TextRuleTest {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
         val styleProvider1: MatchStyleProvider<Any?> = { null }
         val clickHandler1: MatchClickHandler<Any?> = { }
+        val annotationProvider1: MatchAnnotationProvider<Any?> = { null }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
-            matchStyleProvider = styleProvider1,
-            onClick = clickHandler1
+            styleProvider = styleProvider1,
+            onClick = clickHandler1,
+            annotationProvider = annotationProvider1,
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
         val styleProvider2: MatchStyleProvider<Any?> = { null }
         val clickHandler2: MatchClickHandler<Any?> = { }
+        val annotationProvider2: MatchAnnotationProvider<Any?> = { null }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
-            matchStyleProvider = styleProvider2,
-            matchClickHandler = clickHandler2
+            styleProvider = styleProvider2,
+            onClick = clickHandler2,
+            annotationProvider = annotationProvider2,
         )
 
         assertEquals(textMatcher2, rule2.textMatcher)
-        assertEquals(styleProvider2, rule2.matchStyleProvider)
+        assertEquals(styleProvider2, rule2.styleProvider)
         assertEquals(clickHandler2, rule2.onClick)
+        assertEquals(annotationProvider2, rule2.annotationProvider)
     }
 
     @Test
@@ -74,44 +101,24 @@ class TextRuleTest {
         val clickHandler1: MatchClickHandler<Any?> = { }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
-            matchStyleProvider = styleProvider1,
-            onClick = clickHandler1
+            styleProvider = styleProvider1,
+            onClick = clickHandler1,
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
         val clickHandler2: MatchClickHandler<Any?> = { }
+        val annotationProvider2: MatchAnnotationProvider<Any?> = { null }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
-            matchStyle = null,
-            matchClickHandler = clickHandler2
+            style = null,
+            onClick = clickHandler2,
+            annotationProvider = annotationProvider2,
         )
 
         assertEquals(textMatcher2, rule2.textMatcher)
-        assertNotEquals(styleProvider1, rule2.matchStyleProvider)
+        assertNotEquals(styleProvider1, rule2.styleProvider)
         assertEquals(clickHandler2, rule2.onClick)
-    }
-
-    @Test
-    fun testCopy4() {
-        val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider<Any?> = { null }
-        val clickHandler1: MatchClickHandler<Any?> = { }
-        val rule1 = TextRule(
-            textMatcher = textMatcher1,
-            matchStyleProvider = styleProvider1,
-            onClick = clickHandler1
-        )
-
-        val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val clickHandler2: MatchClickHandler<Any?> = { }
-        val rule2 = rule1.copy(
-            textMatcher = textMatcher2,
-            matchClickHandler = clickHandler2
-        )
-
-        assertEquals(textMatcher2, rule2.textMatcher)
-        assertEquals(styleProvider1, rule2.matchStyleProvider)
-        assertEquals(clickHandler2, rule2.onClick)
+        assertEquals(annotationProvider2, rule2.annotationProvider)
     }
 
     @OptIn(NotForAndroid::class)
@@ -158,7 +165,7 @@ class TextRuleTest {
         val text = "test someone@example.com test"
         val rules = listOf(
             TextRuleDefaults.webUrl(NullContextData),
-            TextRuleDefaults.emailAddress(NullContextData)
+            TextRuleDefaults.emailAddress(NullContextData),
         )
         val matches = rules.getAllMatches(text)
 
@@ -180,7 +187,7 @@ class TextRuleTest {
         val rules = listOf(
             TextRuleDefaults.webUrl(NullContextData),
             TextRuleDefaults.emailAddress(NullContextData),
-            TextRuleDefaults.phoneNumber(NullContextData)
+            TextRuleDefaults.phoneNumber(NullContextData),
         )
         val matches = rules.getAllMatches(text)
 
@@ -197,5 +204,23 @@ class TextRuleTest {
         assertEquals(rules[2], matches[4].rule)
         assertEquals("604-555-7890", text.slice(matches[5]))
         assertEquals(rules[2], matches[5].rule)
+    }
+
+    @OptIn(NotForAndroid::class)
+    @IgnoreAndroid
+    @Test
+    fun textWithAnnotations() {
+        val text = "read our privacy policy"
+        val rules = listOf(
+            TextRule(
+                textMatcher = TextMatcher.StringMatcher("privacy policy"),
+                annotationProvider = { "https://example.com/privacy" },
+            ),
+        )
+        val matches = rules.getAllMatches(text)
+
+        assertEquals(1, matches.size)
+        assertEquals("someone@example.com", text.slice(matches[0]))
+        assertEquals(rules[1], matches[0].rule)
     }
 }

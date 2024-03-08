@@ -25,7 +25,7 @@ class TextMatchResultTest {
             rule,
             text,
             3,
-            6
+            6,
         )
 
         assertEquals(rule, result.rule)
@@ -43,7 +43,7 @@ class TextMatchResultTest {
         val result = TextMatchResult(
             rule,
             text,
-            textMatchResult
+            textMatchResult,
         )
 
         assertEquals(rule, result.rule)
@@ -62,7 +62,7 @@ class TextMatchResultTest {
         val result = TextMatchResult(
             rule,
             text,
-            textMatchResult
+            textMatchResult,
         )
 
         assertEquals(rule, result.rule)
