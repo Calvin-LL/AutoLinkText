@@ -16,18 +16,21 @@ interface TextRuleDefaultsInterface {
     fun webUrl(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.webUrl(contextData),
         onClick = MatchClickHandlerDefaults.webUrl(contextData),
+        annotationProvider = MatchAnnotationProviderDefaults.WebUrl,
     )
 
     @NotForAndroid
     fun emailAddress(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.emailAddress(contextData),
         onClick = MatchClickHandlerDefaults.emailAddress(contextData),
+        annotationProvider = MatchAnnotationProviderDefaults.EmailAddress,
     )
 
     @NotForAndroid
     fun phoneNumber(contextData: ContextData = NullContextData) = TextRule(
         textMatcher = TextMatcherDefaults.phoneNumber(contextData),
         onClick = MatchClickHandlerDefaults.phoneNumber(contextData),
+        annotationProvider = MatchAnnotationProviderDefaults.PhoneNumber,
     )
 
     @NotForAndroid

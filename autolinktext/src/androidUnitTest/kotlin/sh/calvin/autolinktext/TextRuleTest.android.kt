@@ -1,5 +1,6 @@
 package sh.calvin.autolinktext
 
+import androidx.compose.ui.text.ExperimentalTextApi
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -103,5 +104,37 @@ class AndroidTextRuleTest {
         assertEquals(rules[2], matches[4].rule)
         assertEquals("604-555-7890", text.slice(matches[5]))
         assertEquals(rules[2], matches[5].rule)
+    }
+
+    @OptIn(NotForAndroid::class, ExperimentalTextApi::class)
+    @Test
+    fun testAnnotateString() {
+        val context = RuntimeEnvironment.getApplication()
+        val contextData = AndroidContextData(context)
+
+        val text = "Visit https://www.google.com\n" +
+                "Visit www.google.com\n" +
+                "Email test@example.com\n" +
+                "Call 6045557890\n" +
+                "Call +1 (604) 555-7890\n" +
+                "Call 604-555-7890\n"
+        val rules = listOf(
+            TextRuleDefaults.webUrl(contextData),
+            TextRuleDefaults.emailAddress(contextData),
+            TextRuleDefaults.phoneNumber(contextData),
+        )
+        val matches = rules.getAllMatches(text)
+        val annotatedString = matches.annotateString(text)
+
+        fun getUrlAtMatch(index: Int) = annotatedString.getUrlAnnotations(
+            matches[index].start, matches[index].endExclusive
+        ).first().item.url
+
+        assertEquals("https://www.google.com", getUrlAtMatch(0))
+        assertEquals("https://www.google.com", getUrlAtMatch(1))
+        assertEquals("mailto:test@example.com", getUrlAtMatch(2))
+        assertEquals("tel:6045557890", getUrlAtMatch(3))
+        assertEquals("tel:+16045557890", getUrlAtMatch(4))
+        assertEquals("tel:6045557890", getUrlAtMatch(5))
     }
 }

@@ -7,12 +7,27 @@ package sh.calvin.autolinktext
  */
 typealias MatchAnnotationProvider<T> = (match: TextMatchResult<T>) -> String?
 
-object MatchAnnotationProviderDefaults {
-    val NoAnnotation: MatchAnnotationProvider<*> = { null }
+interface MatchAnnotationProviderDefaultsInterface {
+    val NoAnnotation: MatchAnnotationProvider<*>
+        get() = { null }
 
     /**
      * A [MatchAnnotationProvider] that uses the matched text as the URL
      * This lets screen readers know that the text is clickable, but doesn't provide a different URL
      */
-    val Verbatim: MatchAnnotationProvider<*> = { it.matchedText }
+    val Verbatim: MatchAnnotationProvider<*>
+        get() = { it.matchedText }
+
+    val WebUrl: MatchAnnotationProvider<*>
+        get() = { it.matchedText }
+
+    val EmailAddress: MatchAnnotationProvider<*>
+        get() = { it.matchedText }
+
+    val PhoneNumber: MatchAnnotationProvider<*>
+        get() = { it.matchedText }
 }
+
+internal expect fun getMatchAnnotationProviderDefaults(): MatchAnnotationProviderDefaultsInterface
+
+val MatchAnnotationProviderDefaults = getMatchAnnotationProviderDefaults()

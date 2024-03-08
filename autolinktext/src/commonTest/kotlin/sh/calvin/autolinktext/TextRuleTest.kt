@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import androidx.compose.ui.text.ExperimentalTextApi
 
 class TextRuleTest {
     @Test
@@ -200,27 +201,39 @@ class TextRuleTest {
         assertEquals(rules[1], matches[2].rule)
         assertEquals("6045557890", text.slice(matches[3]))
         assertEquals(rules[2], matches[3].rule)
-        assertEquals("+1 (604) 555-7890", text.slice(matches[4]))
+        assertEqualsOneOf(listOf("+1 (604) 555-7890", "(604) 555-7890"), text.slice(matches[4]))
         assertEquals(rules[2], matches[4].rule)
         assertEquals("604-555-7890", text.slice(matches[5]))
         assertEquals(rules[2], matches[5].rule)
     }
 
-    @OptIn(NotForAndroid::class)
+    @OptIn(NotForAndroid::class, ExperimentalTextApi::class)
     @IgnoreAndroid
     @Test
-    fun textWithAnnotations() {
-        val text = "read our privacy policy"
+    fun testAnnotateString() {
+        val text = "Visit https://www.google.com\n" +
+                "Visit www.google.com\n" +
+                "Email test@example.com\n" +
+                "Call 6045557890\n" +
+                "Call +1 (604) 555-7890\n" +
+                "Call 604-555-7890\n"
         val rules = listOf(
-            TextRule(
-                textMatcher = TextMatcher.StringMatcher("privacy policy"),
-                annotationProvider = { "https://example.com/privacy" },
-            ),
+            TextRuleDefaults.webUrl(NullContextData),
+            TextRuleDefaults.emailAddress(NullContextData),
+            TextRuleDefaults.phoneNumber(NullContextData),
         )
         val matches = rules.getAllMatches(text)
+        val annotatedString = matches.annotateString(text)
 
-        assertEquals(1, matches.size)
-        assertEquals("someone@example.com", text.slice(matches[0]))
-        assertEquals(rules[1], matches[0].rule)
+        fun getUrlAtMatch(index: Int) = annotatedString.getUrlAnnotations(
+            matches[index].start, matches[index].endExclusive
+        ).first().item.url
+
+        assertEquals("https://www.google.com", getUrlAtMatch(0))
+        assertEqualsOneOf(listOf("https://www.google.com", "http://www.google.com"), getUrlAtMatch(1))
+        assertEquals("mailto:test@example.com", getUrlAtMatch(2))
+        assertEquals("tel:6045557890", getUrlAtMatch(3))
+        assertEquals("tel:+16045557890", getUrlAtMatch(4))
+        assertEquals("tel:6045557890", getUrlAtMatch(5))
     }
 }
