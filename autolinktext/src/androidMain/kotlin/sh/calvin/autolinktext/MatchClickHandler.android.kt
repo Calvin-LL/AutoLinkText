@@ -6,13 +6,17 @@ import android.telephony.PhoneNumberUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import java.net.URL
 
 internal actual fun getMatchClickHandlerDefaults() = object : MatchClickHandlerDefaultsInterface {
     @NotForAndroid
     override fun webUrl(contextData: ContextData): MatchClickHandler<Any?> =
-        {
-            val url = it.matchedText.toUri().let {
-                if (it.scheme == null) it.buildUpon().scheme("https").build() else it
+        { result ->
+            val url = result.matchedText.toUri().let { uri ->
+                if (uri.scheme == null)
+                    URL("https://${result.matchedText}").toString().toUri()
+                else
+                    uri
             }
             val intent = Intent(Intent.ACTION_VIEW, url)
             (contextData as AndroidContextData).context.startActivity(intent)

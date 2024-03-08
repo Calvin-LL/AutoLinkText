@@ -7,12 +7,12 @@ import java.net.URL
 internal actual fun getMatchAnnotationProviderDefaults() =
     object : MatchAnnotationProviderDefaultsInterface {
         override val WebUrl: MatchAnnotationProvider<*>
-            get() = {
-                val url = it.matchedText.toUri().let {
-                    if (it.scheme == null)
-                        URL("https://${it}")
+            get() = { result ->
+                val url = result.matchedText.toUri().let { uri ->
+                    if (uri.scheme == null)
+                        URL("https://${result.matchedText}").toString().toUri()
                     else
-                        it
+                        uri
                 }
                 url.toString()
             }
