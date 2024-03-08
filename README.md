@@ -62,6 +62,11 @@ dependencies {
 }
 ```
 
+### Caveats
+
+- Google might be deprecating the `ClickableText` API in the future. (See [Google IssueTracker issue 323346994](https://issuetracker.google.com/issues/323346994)) I will try my best to keep this library up to date with the latest Compose APIs.
+- Accessibility is not great if your onClick function does something other than opening a link. Hopefully this gets fixed in the future. (See [Google IssueTracker issue 274486643](https://issuetracker.google.com/issues/274486643))
+
 ### Examples
 
 See [demo app code](demoApp/composeApp/src/commonMain/kotlin/sh/calvin/autolinktext/demo/App.kt) for more examples.
@@ -126,7 +131,8 @@ AutoLinkText(
             ),
             onClick = {
                 println("Hashtag ${it.matchedText} clicked")
-            }
+            },
+            annotationProvider = { "https://link.to.hashtag" },
         ),
         TextRule(
             textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
@@ -136,7 +142,8 @@ AutoLinkText(
             ),
             onClick = {
                 println("Mention ${it.matchedText} clicked")
-            }
+            },
+            annotationProvider = { "https://link.to.mentions" },
         )
     )
 )
@@ -171,7 +178,8 @@ AutoLinkText(
             },
             onClick = {
                 println("Hashtag ${it.matchedText} clicked")
-            }
+            },
+            annotationProvider = { "https://link.to.hashtag" },
         ),
     )
 )
@@ -191,6 +199,7 @@ AutoLinkText(
         TextRule(
             textMatcher = TextMatcher.StringMatcher("important"),
             style = SpanStyle(color = Color.Red),
+            annotationProvider = { null },
         ),
     )
 )
@@ -226,6 +235,7 @@ AutoLinkText(
                 matches.filterIndexed { index, _ ->  index % 2 == 0 }
             },
             style = SpanStyle(color = Color.Blue),
+            annotationProvider = { null },
         ),
     )
 )

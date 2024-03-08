@@ -117,7 +117,8 @@ fun MainScreen() {
                         ),
                         onClick = {
                             println("Hashtag ${it.matchedText} clicked")
-                        }
+                        },
+                        annotationProvider = { "https://link.to.hashtag" },
                     ),
                     TextRule(
                         textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
@@ -127,7 +128,8 @@ fun MainScreen() {
                         ),
                         onClick = {
                             println("Mention ${it.matchedText} clicked")
-                        }
+                        },
+                        annotationProvider = { "https://link.to.mentions" },
                     )
                 )
             )
@@ -156,7 +158,8 @@ fun MainScreen() {
                         },
                         onClick = {
                             println("Hashtag ${it.matchedText} clicked")
-                        }
+                        },
+                        annotationProvider = { "https://link.to.hashtag" },
                     ),
                 )
             )
@@ -170,6 +173,7 @@ fun MainScreen() {
                     TextRule(
                         textMatcher = TextMatcher.StringMatcher("important"),
                         style = SpanStyle(color = Color.Red),
+                        annotationProvider = { null },
                     ),
                 )
             )
@@ -199,6 +203,7 @@ fun MainScreen() {
                             matches.filterIndexed { index, _ -> index % 2 == 0 }
                         },
                         style = SpanStyle(color = Color.Blue),
+                        annotationProvider = { null },
                     ),
                 )
             )
@@ -215,7 +220,10 @@ fun MainScreen() {
                         textMatcher = TextMatcher.StringMatcher("this"),
                         onClick = {
                             clickCount++
-                        }
+                        },
+                        // as of right now, this is not usable with a screen reader
+                        // due to https://issuetracker.google.com/issues/274486643
+                        annotationProvider = { null },
                     )
                 )
             )
