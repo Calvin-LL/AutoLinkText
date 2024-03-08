@@ -2,7 +2,9 @@ package sh.calvin.autolinktext
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.style.TextDecoration
 
 interface ContextData
@@ -60,59 +62,62 @@ val TextRuleDefaults = getTextRuleDefaults()
  * A rule to match text and apply style and click handling.
  *
  * @param textMatcher The matcher to find the text in the input.
- * @param matchStyleProvider The provider to provide style for the matched text.
+ * @param styleProvider The provider to provide style for the matched text.
  * @param onClick The handler to handle click events on the matched text.
+ * @param annotationProvider The provider to provide annotation for the matched text.
  */
 class TextRule<T>(
     val textMatcher: TextMatcher<T>,
-    val matchStyleProvider: MatchStyleProvider<T>,
-    val onClick: MatchClickHandler<T> = {}
+    val styleProvider: MatchStyleProvider<T>,
+    val onClick: MatchClickHandler<T>? = null,
+    // if there's no annotation but the text is clickable, use the matched text as the annotation
+    val annotationProvider: MatchAnnotationProvider<T> = if (onClick != null)
+        MatchAnnotationProviderDefaults.Verbatim
+    else
+    // if there's no annotation and the text is not clickable, use no annotation
+        MatchAnnotationProviderDefaults.NoAnnotation,
 ) {
     constructor(
         textMatcher: TextMatcher<T>,
-        matchStyle: SpanStyle? = SpanStyle(
+        style: SpanStyle? = SpanStyle(
             textDecoration = TextDecoration.Underline
         ),
-        onClick: MatchClickHandler<T> = {}
+        onClick: MatchClickHandler<T>? = null,
+        // if there's no annotation but the text is clickable, use the matched text as the annotation
+        annotationProvider: MatchAnnotationProvider<T> = if (onClick != null)
+            MatchAnnotationProviderDefaults.Verbatim
+        else
+        // if there's no annotation and the text is not clickable, use no annotation
+            MatchAnnotationProviderDefaults.NoAnnotation,
     ) : this(
         textMatcher = textMatcher,
-        matchStyleProvider = { matchStyle },
-        onClick = onClick
-    )
-
-    fun copy() = TextRule(
-        textMatcher = textMatcher,
-        matchStyleProvider = matchStyleProvider,
-        onClick = onClick
+        styleProvider = { style },
+        onClick = onClick,
+        annotationProvider = annotationProvider,
     )
 
     fun copy(
         textMatcher: TextMatcher<T> = this.textMatcher,
-        matchClickHandler: MatchClickHandler<T> = this.onClick
+        styleProvider: MatchStyleProvider<T> = this.styleProvider,
+        onClick: MatchClickHandler<T>? = this.onClick,
+        annotationProvider: MatchAnnotationProvider<T> = this.annotationProvider,
     ) = TextRule(
         textMatcher = textMatcher,
-        matchStyleProvider = matchStyleProvider,
-        onClick = matchClickHandler
+        styleProvider = styleProvider,
+        onClick = onClick,
+        annotationProvider = annotationProvider,
     )
 
     fun copy(
         textMatcher: TextMatcher<T> = this.textMatcher,
-        matchStyleProvider: MatchStyleProvider<T> = this.matchStyleProvider,
-        matchClickHandler: MatchClickHandler<T> = this.onClick
+        style: SpanStyle?,
+        onClick: MatchClickHandler<T>? = this.onClick,
+        annotationProvider: MatchAnnotationProvider<T> = this.annotationProvider,
     ) = TextRule(
         textMatcher = textMatcher,
-        matchStyleProvider = matchStyleProvider,
-        onClick = matchClickHandler
-    )
-
-    fun copy(
-        textMatcher: TextMatcher<T> = this.textMatcher,
-        matchStyle: SpanStyle? = null,
-        matchClickHandler: MatchClickHandler<T> = this.onClick
-    ) = TextRule(
-        textMatcher = textMatcher,
-        matchStyleProvider = { matchStyle },
-        onClick = matchClickHandler
+        styleProvider = { style },
+        onClick = onClick,
+        annotationProvider = annotationProvider,
     )
 }
 
@@ -172,19 +177,21 @@ private fun <T> List<TextMatchResult<T>>.pruneOverlaps(): List<TextMatchResult<T
     return sortedList
 }
 
+@OptIn(ExperimentalTextApi::class)
 internal fun <T> List<TextMatchResult<T>>.annotateString(text: String): AnnotatedString {
     val annotatedString = AnnotatedString.Builder(text)
     forEach { match ->
-        val style = match.rule.matchStyleProvider(match)
+        val style = match.rule.styleProvider(match)
         if (style != null) {
             annotatedString.addStyle(style, match.start, match.endExclusive)
         }
-//        annotatedString.addStringAnnotation(
-//            match.textRule.name,
-//            text.slice(match.match),
-//            match.match.start,
-//            match.match.end
-//        )
+        match.rule.annotationProvider(match)?.also { annotation ->
+            annotatedString.addUrlAnnotation(
+                urlAnnotation = UrlAnnotation(annotation),
+                start = match.start,
+                end = match.endExclusive,
+            )
+        }
     }
 
     return annotatedString.toAnnotatedString()

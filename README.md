@@ -88,7 +88,7 @@ AutoLinkText(
 
 #### Customize Link Color
 
-You can override the default styling by mapping over the default list of rules and changing the `matchStyle` in each default rule.
+You can override the default styling by mapping over the default list of rules and changing the `style` in each default rule.
 
 ```kotlin
 AutoLinkText(
@@ -98,7 +98,7 @@ AutoLinkText(
     ),
     textRules = TextRuleDefaults.defaultList().map {
         it.copy(
-            matchStyle = SpanStyle(
+            style = SpanStyle(
                 color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             )
@@ -120,7 +120,7 @@ AutoLinkText(
     textRules = listOf(
         TextRule(
             textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-            matchStyle = SpanStyle(
+            style = SpanStyle(
                 color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             ),
@@ -130,7 +130,7 @@ AutoLinkText(
         ),
         TextRule(
             textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
-            matchStyle = SpanStyle(
+            style = SpanStyle(
                 color = MaterialTheme.colorScheme.secondary,
                 textDecoration = TextDecoration.Underline
             ),
@@ -144,7 +144,7 @@ AutoLinkText(
 
 #### Match Dependent Styling
 
-Use `matchStyleProvider` to provide a `SpanStyle` based on the matched text.
+Use `styleProvider` to provide a `SpanStyle` based on the matched text.
 
 ```kotlin
 AutoLinkText(
@@ -155,7 +155,7 @@ AutoLinkText(
     textRules = listOf(
         TextRule(
             textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-            matchStyleProvider = {
+            styleProvider = {
                 val hashtag = it.matchedText
                 if (hashtag == "#hashtag1") {
                     SpanStyle(
@@ -190,7 +190,7 @@ AutoLinkText(
     textRules = listOf(
         TextRule(
             textMatcher = TextMatcher.StringMatcher("important"),
-            matchStyle = SpanStyle(color = Color.Red),
+            style = SpanStyle(color = Color.Red),
         ),
     )
 )
@@ -225,7 +225,7 @@ AutoLinkText(
                 }
                 matches.filterIndexed { index, _ ->  index % 2 == 0 }
             },
-            matchStyle = SpanStyle(color = Color.Blue),
+            style = SpanStyle(color = Color.Blue),
         ),
     )
 )

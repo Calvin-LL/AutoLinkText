@@ -95,7 +95,7 @@ fun MainScreen() {
                 ),
                 textRules = TextRuleDefaults.defaultList().map {
                     it.copy(
-                        matchStyle = SpanStyle(
+                        style = SpanStyle(
                             color = MaterialTheme.colorScheme.primary,
                             textDecoration = TextDecoration.Underline
                         )
@@ -111,7 +111,7 @@ fun MainScreen() {
                 textRules = listOf(
                     TextRule(
                         textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-                        matchStyle = SpanStyle(
+                        style = SpanStyle(
                             color = MaterialTheme.colorScheme.primary,
                             textDecoration = TextDecoration.Underline
                         ),
@@ -121,7 +121,7 @@ fun MainScreen() {
                     ),
                     TextRule(
                         textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
-                        matchStyle = SpanStyle(
+                        style = SpanStyle(
                             color = MaterialTheme.colorScheme.secondary,
                             textDecoration = TextDecoration.Underline
                         ),
@@ -140,7 +140,7 @@ fun MainScreen() {
                 textRules = listOf(
                     TextRule(
                         textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-                        matchStyleProvider = {
+                        styleProvider = {
                             val hashtag = it.matchedText
                             if (hashtag == "#hashtag1") {
                                 SpanStyle(
@@ -169,7 +169,7 @@ fun MainScreen() {
                 textRules = listOf(
                     TextRule(
                         textMatcher = TextMatcher.StringMatcher("important"),
-                        matchStyle = SpanStyle(color = Color.Red),
+                        style = SpanStyle(color = Color.Red),
                     ),
                 )
             )
@@ -198,7 +198,7 @@ fun MainScreen() {
                             }
                             matches.filterIndexed { index, _ -> index % 2 == 0 }
                         },
-                        matchStyle = SpanStyle(color = Color.Blue),
+                        style = SpanStyle(color = Color.Blue),
                     ),
                 )
             )
