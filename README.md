@@ -31,7 +31,7 @@ If you're using Version Catalog, add the following to your `libs.versions.toml` 
 ```toml
 [versions]
 #...
-autolinktext = "1.1.0"
+autolinktext = "1.1.1"
 
 [libraries]
 #...
@@ -43,7 +43,7 @@ or
 ```toml
 [libraries]
 #...
-autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "1.1.0" }
+autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "1.1.1" }
 ```
 
 ### Gradle
@@ -54,7 +54,7 @@ If you're using Gradle instead add the following to your `build.gradle` file:
 
 ```kotlin
 dependencies {
-    implementation("sh.calvin.autolinktext:autolinktext:1.1.0")
+    implementation("sh.calvin.autolinktext:autolinktext:1.1.1")
 }
 ```
 
@@ -62,7 +62,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'sh.calvin.autolinktext:autolinktext:1.1.0'
+    implementation 'sh.calvin.autolinktext:autolinktext:1.1.1'
 }
 ```
 
