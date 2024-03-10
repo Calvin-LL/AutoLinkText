@@ -6,10 +6,11 @@ plugins {
 }
 
 group = "sh.calvin.autolinktext"
-version = "1.1.0"
+version = "1.1.1"
 
 kotlin {
     androidTarget {
+        publishLibraryVariants("release", "debug")
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
