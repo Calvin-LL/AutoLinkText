@@ -48,7 +48,7 @@ autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "1.1.
 
 ### Gradle
 
-If you're using Gradle instead add the following to your `build.gradle` file:
+If you're using Gradle instead, add the following to your `build.gradle` file:
 
 #### Kotlin DSL
 
