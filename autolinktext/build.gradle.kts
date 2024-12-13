@@ -1,8 +1,12 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.compose)
-    alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.maven.publish)
 }
 
 group = "sh.calvin.autolinktext"
@@ -12,15 +16,23 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release", "debug")
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_1_8)
+                }
             }
         }
     }
 
     jvm()
 
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+    js {
         browser()
         binaries.executable()
     }
@@ -80,9 +92,6 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
