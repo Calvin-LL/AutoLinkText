@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "sh.calvin.autolinktext"
-version = "1.1.1"
+version = "2.0.0"
 
 kotlin {
     androidTarget {
