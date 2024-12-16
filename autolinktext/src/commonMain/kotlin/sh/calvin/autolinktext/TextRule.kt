@@ -79,6 +79,17 @@ sealed class TextRule<T> private constructor(
         override val stylesProvider: MatchStylesProvider<T>? = null,
         val urlProvider: MatchUrlProvider<T> = MatchUrlProviderDefaults.Verbatim
     ) : TextRule<T>(textMatcher, stylesProvider) {
+        constructor(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles? = null,
+            urlProvider: MatchUrlProvider<T> = MatchUrlProviderDefaults.Verbatim
+        ) : this(textMatcher, stylesProvider = styles?.let { s -> { s } }, urlProvider)
+
+        constructor(
+            textMatcher: TextMatcher<T>,
+            urlProvider: MatchUrlProvider<T> = MatchUrlProviderDefaults.Verbatim
+        ) : this(textMatcher, stylesProvider = null, urlProvider)
+
         fun copy(
             textMatcher: TextMatcher<T> = this.textMatcher,
             styles: TextLinkStyles?,
@@ -111,6 +122,17 @@ sealed class TextRule<T> private constructor(
         override val stylesProvider: MatchStylesProvider<T>? = null,
         val onClick: MatchClickHandler<T>,
     ) : TextRule<T>(textMatcher, stylesProvider) {
+        constructor(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles? = null,
+            onClick: MatchClickHandler<T>,
+        ) : this(textMatcher, stylesProvider = styles?.let { s -> { s } }, onClick)
+
+        constructor(
+            textMatcher: TextMatcher<T>,
+            onClick: MatchClickHandler<T>,
+        ) : this(textMatcher, stylesProvider = null, onClick)
+
         fun copy(
             textMatcher: TextMatcher<T> = this.textMatcher,
             styles: TextLinkStyles?,

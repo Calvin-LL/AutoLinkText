@@ -21,12 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import sh.calvin.autolinktext.SimpleTextMatchResult
 import sh.calvin.autolinktext.TextMatcher
 import sh.calvin.autolinktext.TextRule
-import sh.calvin.autolinktext.autoLinkText
+import sh.calvin.autolinktext.rememberAutoLinkText
 import sh.calvin.autolinktext.demo.ui.theme.AutoLinkTextTheme
 import sh.calvin.autolinktext.slice
 
@@ -52,7 +53,7 @@ fun MainScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                AnnotatedString.autoLinkText(
+                AnnotatedString.rememberAutoLinkText(
                     """
                     |Visit https://www.google.com
                     |Visit www.google.com
@@ -65,27 +66,46 @@ fun MainScreen() {
             )
 
             Text(
-                AnnotatedString.autoLinkText(
-                    "Make your own rules like #hashtag and @mention",
-                    textRules = listOf(
-                        TextRule.Clickable(
-                            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-                            onClick = {
-                                println("Hashtag ${it.matchedText} clicked")
-                            },
-                        ),
-                        TextRule.Clickable(
-                            textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
-                            onClick = {
-                                println("Mention ${it.matchedText} clicked")
-                            },
+                AnnotatedString.rememberAutoLinkText(
+                    "Visit https://www.google.com",
+                    defaultLinkStyles = TextLinkStyles(
+                        SpanStyle(
+                            color = Color.Blue,
+                            textDecoration = TextDecoration.Underline
                         )
                     )
                 )
             )
 
             Text(
-                AnnotatedString.autoLinkText(
+                AnnotatedString.rememberAutoLinkText(
+                    "Make your own rules like #hashtag and @mention",
+                    textRules = listOf(
+                        TextRule.Styleable(
+                            textMatcher = TextMatcher.StringMatcher("Make"),
+                            style = SpanStyle(fontWeight = FontWeight.Bold)
+                        ),
+                        TextRule.Clickable(
+                            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
+                            onClick = {
+                                println("Hashtag ${it.matchedText} clicked")
+                            },
+                        ),
+                        TextRule.Url(
+                            textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
+                            styles = TextLinkStyles(
+                                SpanStyle(
+                                    color = Color.Blue
+                                )
+                            ),
+                            urlProvider = { "https://twitter.com/${it.matchedText}" }
+                        )
+                    )
+                )
+            )
+
+            Text(
+                AnnotatedString.rememberAutoLinkText(
                     "Style the same rule differently like #hashtag1 and #hashtag2",
                     textRules = listOf(
                         TextRule.Clickable(
@@ -117,7 +137,7 @@ fun MainScreen() {
             )
 
             Text(
-                AnnotatedString.autoLinkText(
+                AnnotatedString.rememberAutoLinkText(
                     "This is very important",
                     textRules = listOf(
                         TextRule.Styleable(
@@ -129,7 +149,7 @@ fun MainScreen() {
             )
 
             Text(
-                AnnotatedString.autoLinkText(
+                AnnotatedString.rememberAutoLinkText(
                     "Make every  other  word blue",
                     textRules = listOf(
                         TextRule.Styleable(
@@ -159,7 +179,7 @@ fun MainScreen() {
             var clickCount by remember { mutableIntStateOf(0) }
 
             Text(
-                AnnotatedString.autoLinkText(
+                AnnotatedString.rememberAutoLinkText(
                     "Make this clickable, this too but not THIS. Click count: $clickCount.",
                     textRules = listOf(
                         TextRule.Clickable(

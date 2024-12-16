@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextDecoration
  * @param defaultLinkStyles The default [TextLinkStyles] to apply to the auto-linked text.
  */
 @Composable
-fun AnnotatedString.Companion.autoLinkText(
+fun AnnotatedString.Companion.rememberAutoLinkText(
     text: String,
     textRules: Collection<TextRule<Any?>> = TextRuleDefaults.defaultList(),
     defaultLinkStyles: TextLinkStyles? = TextLinkStyles(
