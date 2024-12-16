@@ -2,6 +2,8 @@
 
 AutoLinkText is a simple library that makes links, emails, and phone numbers clickable in text in Jetpack Compose and Kotlin Compose Multiplatform.
 
+The latest demo app APK can be found in the [releases](https://github.com/Calvin-LL/AutoLinkText/releases) section under the "Assets" section of the latest release.
+
 ## Motivation
 
 [`TextView`](https://developer.android.com/reference/android/widget/TextView) has [`autoLink`](https://developer.android.com/reference/android/widget/TextView#attr_android:autoLink) and [`Linkify`](https://developer.android.com/reference/android/text/util/Linkify) but Compose doesn't have an equivalent. This library aims to fill that gap.
@@ -20,7 +22,7 @@ AutoLinkText is a simple library that makes links, emails, and phone numbers cli
 - Create custom matchers for your own patterns (e.g. hashtags, mentions, etc.)
 - Customizable styling for links
 - Customizable click listeners for links
-- Supports Compose Multiplatform (Android, iOS, Desktop/JVM, Wasm)
+- Supports Compose Multiplatform (Android, iOS, Desktop/JVM, Wasm, JS)
 
 ## Usage
 
@@ -72,133 +74,139 @@ See [demo app code](demoApp/composeApp/src/commonMain/kotlin/sh/calvin/autolinkt
 
 #### Basic Usage
 
-By default `AutoLinkText` turns URLs, emails, and phone numbers into clickable links and underlines them.
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/basic-dark.png"><img alt="" src="assets/basic-light.png"></picture>
+
+By default `AutoLinkText` turns URLs, emails, and phone numbers into clickable links, set the color to `MaterialTheme.colorScheme.primary`, and underline the links.
 
 ```kotlin
-AutoLinkText(
-    text = """
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        """
         |Visit https://www.google.com
         |Visit www.google.com
         |Email test@example.com
         |Call 6045557890
         |Call +1 (604) 555-7890
         |Call 604-555-7890
-    """.trimMargin(),
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
+        """.trimMargin()
+    )
 )
 ```
 
 #### Customize Link Color
 
-You can override the default styling by mapping over the default list of rules and changing the `style` in each default rule.
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/custom-color-dark.png"><img alt="" src="assets/custom-color-light.png"></picture>
+
+You can override the default styling by providing a `TextLinkStyles` object.
 
 ```kotlin
-AutoLinkText(
-    text = "...",
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
-    textRules = TextRuleDefaults.defaultList().map {
-        it.copy(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        "...",
+        defaultLinkStyles = TextLinkStyles(
+            SpanStyle(
+                color = Color.Blue,
                 textDecoration = TextDecoration.Underline
             )
         )
-    }
+    )
 )
 ```
 
 #### Make Your Own Rules
 
-Create your own rules by providing `TextRule`s with a `TextMatcher`, an optional `MatchStyle` for the matched text and an optional `onClick` lambda.
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/make-rule-dark.png"><img alt="" src="assets/make-rule-light.png"></picture>
+
+There are 3 types of `TextRule`s: `Url`, `Clickable`, and `Styleable`.
+
+- `Url` turns matched text into a clickable link, and when clicked, opens the URL.
+- `Clickable` turns matched text into a clickable link, and when clicked, calls the `onClick` lambda.
+- `Styleable` applies a `SpanStyle` to the matched text.
 
 ```kotlin
-AutoLinkText(
-    text = "Make your own rules like #hashtag and @mention",
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
-    textRules = listOf(
-        TextRule(
-            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        "Make your own rules like #hashtag and @mention",
+        textRules = listOf(
+            TextRule.Styleable(
+                textMatcher = TextMatcher.StringMatcher("Make"),
+                style = SpanStyle(fontWeight = FontWeight.Bold)
             ),
-            onClick = {
-                println("Hashtag ${it.matchedText} clicked")
-            },
-            annotationProvider = { "https://link.to.hashtag" },
-        ),
-        TextRule(
-            textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.secondary,
-                textDecoration = TextDecoration.Underline
+            TextRule.Clickable(
+                textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
+                onClick = {
+                    println("Hashtag ${it.matchedText} clicked")
+                },
             ),
-            onClick = {
-                println("Mention ${it.matchedText} clicked")
-            },
-            annotationProvider = { "https://link.to.mentions" },
+            TextRule.Url(
+                textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
+                styles = TextLinkStyles(
+                    SpanStyle(
+                        color = Color.Blue
+                    )
+                ),
+                urlProvider = { "https://twitter.com/${it.matchedText}" }
+            )
         )
     )
 )
 ```
 
-#### Match Dependent Styling
+#### Different Styles for Different Matches
 
-Use `styleProvider` to provide a `SpanStyle` based on the matched text.
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/different-style-dark.png"><img alt="" src="assets/different-style-light.png"></picture>
+
+Provide a `stylesProvider` lambda that returns a `TextLinkStyles` object based on the matched text.
 
 ```kotlin
-AutoLinkText(
-    text = "Style the same rule differently like #hashtag1 and #hashtag2",
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
-    textRules = listOf(
-        TextRule(
-            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-            styleProvider = {
-                val hashtag = it.matchedText
-                if (hashtag == "#hashtag1") {
-                    SpanStyle(
-                        color = Color.Red,
-                        textDecoration = TextDecoration.Underline
-                    )
-                } else {
-                    SpanStyle(
-                        color = Color.Blue,
-                        textDecoration = TextDecoration.Underline
-                    )
-                }
-            },
-            onClick = {
-                println("Hashtag ${it.matchedText} clicked")
-            },
-            annotationProvider = { "https://link.to.hashtag" },
-        ),
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        "Style the same rule differently like #hashtag1 and #hashtag2",
+        textRules = listOf(
+            TextRule.Clickable(
+                textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
+                stylesProvider = {
+                    val hashtag = it.matchedText
+                    if (hashtag == "#hashtag1") {
+                        TextLinkStyles(
+                            SpanStyle(
+                                color = Color.Red,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
+                    } else {
+                        TextLinkStyles(
+                            SpanStyle(
+                                color = Color.Blue,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
+                    }
+                },
+                onClick = {
+                    println("Hashtag ${it.matchedText} clicked")
+                },
+            ),
+        )
     )
 )
 ```
 
-#### `TextRule`s don't have to be Clickable
+#### `TextRule`s don't have to be clickable
 
-You can create `TextRule`s that are not clickable by not providing an `onClick` lambda.
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/not-clickable-dark.png"><img alt="" src="assets/not-clickable-light.png"></picture>
+
+You can create `TextRule`s that are not clickable by using `TextRule.Styleable`.
 
 ```kotlin
-AutoLinkText(
-    text = "This is very important",
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
-    textRules = listOf(
-        TextRule(
-            textMatcher = TextMatcher.StringMatcher("important"),
-            style = SpanStyle(color = Color.Red),
-            annotationProvider = { null },
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        "This is very important",
+        textRules = listOf(
+            TextRule.Styleable(
+                textMatcher = TextMatcher.StringMatcher("important"),
+                style = SpanStyle(color = Color.Red),
+            )
         ),
     )
 )
@@ -206,49 +214,47 @@ AutoLinkText(
 
 #### Make Your Own Matcher
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/make-matcher-dark.png"><img alt="" src="assets/make-matcher-light.png"></picture>
+
 Create your own matchers with `TextMatcher.FunctionMatcher` that takes the given text and returns a list of `SimpleTextMatchResult`s.
 
 ```kotlin
-AutoLinkText(
-    text = "Make every  other  word blue",
-    style = LocalTextStyle.current.copy(
-        color = LocalContentColor.current,
-    ),
-    textRules = listOf(
-        TextRule(
-            textMatcher = TextMatcher.FunctionMatcher {
-                val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
-                var currentWordStart = 0
-                "$it ".forEachIndexed { index, char ->
-                    if (char.isWhitespace()) {
-                        val match = SimpleTextMatchResult(
-                            start = currentWordStart,
-                            end = index,
-                        )
-                        if (it.slice(match).isNotBlank()) {
-                            matches.add(match)
+Text(
+    AnnotatedString.rememberAutoLinkText(
+        "Make every  other  word blue",
+        textRules = listOf(
+            TextRule.Styleable(
+                textMatcher = TextMatcher.FunctionMatcher {
+                    val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
+                    var currentWordStart = 0
+                    "$it ".forEachIndexed { index, char ->
+                        if (char.isWhitespace()) {
+                            val match = SimpleTextMatchResult(
+                                start = currentWordStart,
+                                end = index,
+                            )
+                            if (it.slice(match).isNotBlank()) {
+                                matches.add(match)
+                            }
+                            currentWordStart = index + 1
                         }
-                        currentWordStart = index + 1
                     }
-                }
-                matches.filterIndexed { index, _ ->  index % 2 == 0 }
-            },
-            style = SpanStyle(color = Color.Blue),
-            annotationProvider = { null },
+                    matches.filterIndexed { index, _ -> index % 2 == 0 }
+                },
+                style = SpanStyle(color = Color.Blue),
+            ),
         ),
     )
 )
 ```
 
-## Caveats
-
-- Google seems to be working on replacing [`ClickableText`](<https://developer.android.com/reference/kotlin/androidx/compose/foundation/text/package-summary#ClickableText(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,androidx.compose.ui.text.TextStyle,kotlin.Boolean,androidx.compose.ui.text.style.TextOverflow,kotlin.Int,kotlin.Function1,kotlin.Function1)>) API with [`LinkAnnotation`](https://developer.android.com/reference/kotlin/androidx/compose/ui/text/LinkAnnotation) but it is not functional yet. I will try my best to keep this library up to date with the latest Compose APIs.
-- The default list of `TextRule`s are accessible. But at the moment accessibility is not great if you add `TextRule`s with onClick function that does something other than opening a link because of a bug with [`ClickableText`](<https://developer.android.com/reference/kotlin/androidx/compose/foundation/text/package-summary#ClickableText(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,androidx.compose.ui.text.TextStyle,kotlin.Boolean,androidx.compose.ui.text.style.TextOverflow,kotlin.Int,kotlin.Function1,kotlin.Function1)>). Hopefully this gets fixed in the future (See [Google IssueTracker issue 274486643](https://issuetracker.google.com/issues/274486643)).
-
 ## API
 
 - [AutoLinkText](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/AutoLinkText.kt)
 - [TextRule](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
+  - [Url](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
+  - [Clickable](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
+  - [Styleable](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
 - [TextRuleDefaults](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
   - [webUrl](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
   - [emailAddress](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextRule.kt)
@@ -267,7 +273,7 @@ AutoLinkText(
   - [NoOp](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchFilter.kt)
   - [WebUrls](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchFilter.kt)
   - [PhoneNumber](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchFilter.kt)
-- [MatchStyleProvider](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchStyleProvider.kt)
+- [MatchStylesProvider](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchStylesProvider.kt)
 - [SimpleTextMatchResult](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/SimpleTextMatchResult.kt)
 - [TextMatchResult](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/TextMatchResult.kt)
 - [MatchClickHandlerDefaults](autolinktext/src/commonMain/kotlin/sh/calvin/autolinktext/MatchClickHandler.kt)
