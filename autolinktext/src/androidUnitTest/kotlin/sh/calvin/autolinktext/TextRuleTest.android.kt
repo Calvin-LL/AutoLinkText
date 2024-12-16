@@ -1,6 +1,7 @@
 package sh.calvin.autolinktext
 
 import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -126,9 +127,9 @@ class AndroidTextRuleTest {
         val matches = rules.getAllMatches(text)
         val annotatedString = matches.annotateString(text)
 
-        fun getUrlAtMatch(index: Int) = annotatedString.getUrlAnnotations(
+        fun getUrlAtMatch(index: Int) = (annotatedString.getLinkAnnotations(
             matches[index].start, matches[index].endExclusive
-        ).first().item.url
+        ).first().item as? LinkAnnotation.Url)?.url
 
         assertEquals("https://www.google.com", getUrlAtMatch(0))
         assertEquals("https://www.google.com", getUrlAtMatch(1))

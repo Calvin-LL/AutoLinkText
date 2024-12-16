@@ -7,7 +7,7 @@ androidxCore = "1.15.0"
 activityCompose = "1.9.3"
 mavenPublish = "0.27.0"
 libphonenumber = "8.13.31"
-robolectric = "4.9"
+robolectric = "4.14.1"
 
 [libraries]
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }

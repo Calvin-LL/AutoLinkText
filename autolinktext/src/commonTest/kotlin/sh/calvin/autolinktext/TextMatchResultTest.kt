@@ -1,5 +1,6 @@
 package sh.calvin.autolinktext
 
+import androidx.compose.ui.text.SpanStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -7,7 +8,7 @@ import kotlin.test.assertNull
 class TextMatchResultTest {
     @Test
     fun shouldReturnCorrectSubstring() {
-        val rule = TextRule(TextMatcher.StringMatcher("test"))
+        val rule = TextRule.Styleable(TextMatcher.StringMatcher("test"), SpanStyle())
         val text = "123abc456def789"
         val match = TextMatchResult(rule, text, 3, 6)
 
@@ -18,7 +19,7 @@ class TextMatchResultTest {
 
     @Test
     fun shouldConstructWithoutData() {
-        val rule = TextRule(TextMatcher.StringMatcher("test"))
+        val rule = TextRule.Styleable(TextMatcher.StringMatcher("test"), SpanStyle())
         val text = "123abc456def789"
 
         val result = TextMatchResult(
@@ -36,7 +37,7 @@ class TextMatchResultTest {
 
     @Test
     fun shouldConstructFromSimpleTextMatchResultWithoutData() {
-        val rule = TextRule(TextMatcher.StringMatcher("test"))
+        val rule = TextRule.Styleable(TextMatcher.StringMatcher("test"), SpanStyle())
         val text = "123abc456def789"
 
         val textMatchResult = SimpleTextMatchResult(3, 6)
@@ -54,7 +55,7 @@ class TextMatchResultTest {
 
     @Test
     fun shouldConstructFromSimpleTextMatchResultWithData() {
-        val rule = TextRule(TextMatcher.RegexMatcher(Regex("abc")))
+        val rule = TextRule.Styleable(TextMatcher.RegexMatcher(Regex("abc")), SpanStyle())
         val text = "123abc456def789"
         val matchResult = Regex("abc").find(text)!!
 
