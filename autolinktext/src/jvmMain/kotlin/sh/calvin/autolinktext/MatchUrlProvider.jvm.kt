@@ -2,9 +2,9 @@ package sh.calvin.autolinktext
 
 import java.net.URI
 
-internal actual fun getMatchAnnotationProviderDefaults() =
-    object : MatchAnnotationProviderDefaultsInterface {
-        override val WebUrl: MatchAnnotationProvider<*>
+internal actual fun getMatchUrlProviderDefaults() =
+    object : MatchUrlProviderDefaultsInterface {
+        override val WebUrl: MatchUrlProvider<*>
             get() = { result ->
                 val url = URI(result.matchedText).let {
                     if (it.scheme == null || it.scheme.isEmpty()) {
@@ -16,12 +16,12 @@ internal actual fun getMatchAnnotationProviderDefaults() =
                 url.toString()
             }
 
-        override val EmailAddress: MatchAnnotationProvider<*>
+        override val EmailAddress: MatchUrlProvider<*>
             get() = {
                 "mailto:${it.matchedText}"
             }
 
-        override val PhoneNumber: MatchAnnotationProvider<*>
+        override val PhoneNumber: MatchUrlProvider<*>
             get() = {
                 "tel:${normalizePhoneNumber(it.matchedText)}"
             }

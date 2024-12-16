@@ -1,10 +1,11 @@
 package sh.calvin.autolinktext
 
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
-import androidx.compose.ui.text.ExperimentalTextApi
 
 class TextRuleTest {
     @Test
@@ -31,95 +32,95 @@ class TextRuleTest {
     fun testSecondaryConstructor() {
         val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
         val clickHandler: MatchClickHandler<Any?> = { }
-        val annotationProvider: MatchAnnotationProvider<Any?> = { null }
+        val urlProvider: MatchUrlProvider<Any?> = { null }
         val rule = TextRule(
             textMatcher = textMatcher,
-            style = null,
+            styles = null,
             onClick = clickHandler,
-            annotationProvider = annotationProvider,
+            urlProvider = urlProvider,
         )
 
         assertEquals(textMatcher, rule.textMatcher)
-        assertNull(rule.styleProvider(TextMatchResult(rule, "", 0, 0, null)))
+        assertNull(rule.stylesProvider)
         assertEquals(clickHandler, rule.onClick)
-        assertEquals(annotationProvider, rule.annotationProvider)
+        assertEquals(urlProvider, rule.urlProvider)
     }
 
     @Test
     fun testCopy1() {
         val textMatcher = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider: MatchStyleProvider<Any?> = { null }
+        val stylesProvider: MatchStylesProvider<Any?> = { null }
         val clickHandler: MatchClickHandler<Any?> = { }
-        val annotationProvider: MatchAnnotationProvider<Any?> = { null }
+        val urlProvider: MatchUrlProvider<Any?> = { null }
         val rule = TextRule(
             textMatcher = textMatcher,
-            styleProvider = styleProvider,
+            stylesProvider = stylesProvider,
             onClick = clickHandler,
-            annotationProvider = annotationProvider,
+            urlProvider = urlProvider,
         )
         val copy = rule.copy()
 
         assertEquals(rule.textMatcher, copy.textMatcher)
-        assertEquals(rule.styleProvider, copy.styleProvider)
+        assertEquals(rule.stylesProvider, copy.stylesProvider)
         assertEquals(rule.onClick, copy.onClick)
-        assertEquals(rule.annotationProvider, copy.annotationProvider)
+        assertEquals(rule.urlProvider, copy.urlProvider)
     }
 
     @Test
     fun testCopy2() {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider<Any?> = { null }
+        val stylesProvider1: MatchStylesProvider<Any?> = { null }
         val clickHandler1: MatchClickHandler<Any?> = { }
-        val annotationProvider1: MatchAnnotationProvider<Any?> = { null }
+        val urlProvider1: MatchUrlProvider<Any?> = { null }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
-            styleProvider = styleProvider1,
+            stylesProvider = stylesProvider1,
             onClick = clickHandler1,
-            annotationProvider = annotationProvider1,
+            urlProvider = urlProvider1,
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
-        val styleProvider2: MatchStyleProvider<Any?> = { null }
+        val stylesProvider2: MatchStylesProvider<Any?> = { null }
         val clickHandler2: MatchClickHandler<Any?> = { }
-        val annotationProvider2: MatchAnnotationProvider<Any?> = { null }
+        val urlProvider2: MatchUrlProvider<Any?> = { null }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
-            styleProvider = styleProvider2,
+            stylesProvider = stylesProvider2,
             onClick = clickHandler2,
-            annotationProvider = annotationProvider2,
+            urlProvider = urlProvider2,
         )
 
         assertEquals(textMatcher2, rule2.textMatcher)
-        assertEquals(styleProvider2, rule2.styleProvider)
+        assertEquals(stylesProvider2, rule2.stylesProvider)
         assertEquals(clickHandler2, rule2.onClick)
-        assertEquals(annotationProvider2, rule2.annotationProvider)
+        assertEquals(urlProvider2, rule2.urlProvider)
     }
 
     @Test
     fun testCopy3() {
         val textMatcher1 = TextMatcher.RegexMatcher(Regex("123a"))
-        val styleProvider1: MatchStyleProvider<Any?> = { null }
+        val stylesProvider1: MatchStylesProvider<Any?> = { null }
         val clickHandler1: MatchClickHandler<Any?> = { }
         val rule1 = TextRule(
             textMatcher = textMatcher1,
-            styleProvider = styleProvider1,
+            stylesProvider = stylesProvider1,
             onClick = clickHandler1,
         )
 
         val textMatcher2 = TextMatcher.RegexMatcher(Regex("abc"))
         val clickHandler2: MatchClickHandler<Any?> = { }
-        val annotationProvider2: MatchAnnotationProvider<Any?> = { null }
+        val urlProvider2: MatchUrlProvider<Any?> = { null }
         val rule2 = rule1.copy(
             textMatcher = textMatcher2,
-            style = null,
+            styles = null,
             onClick = clickHandler2,
-            annotationProvider = annotationProvider2,
+            urlProvider = urlProvider2,
         )
 
         assertEquals(textMatcher2, rule2.textMatcher)
-        assertNotEquals(styleProvider1, rule2.styleProvider)
+        assertNotEquals(stylesProvider1, rule2.stylesProvider)
         assertEquals(clickHandler2, rule2.onClick)
-        assertEquals(annotationProvider2, rule2.annotationProvider)
+        assertEquals(urlProvider2, rule2.urlProvider)
     }
 
     @OptIn(NotForAndroid::class)
@@ -225,12 +226,15 @@ class TextRuleTest {
         val matches = rules.getAllMatches(text)
         val annotatedString = matches.annotateString(text)
 
-        fun getUrlAtMatch(index: Int) = annotatedString.getUrlAnnotations(
+        fun getUrlAtMatch(index: Int) = (annotatedString.getLinkAnnotations(
             matches[index].start, matches[index].endExclusive
-        ).first().item.url
+        ).first().item as? LinkAnnotation.Url)?.url
 
         assertEquals("https://www.google.com", getUrlAtMatch(0))
-        assertEqualsOneOf(listOf("https://www.google.com", "http://www.google.com"), getUrlAtMatch(1))
+        assertEqualsOneOf(
+            listOf("https://www.google.com", "http://www.google.com"),
+            getUrlAtMatch(1) ?: ""
+        )
         assertEquals("mailto:test@example.com", getUrlAtMatch(2))
         assertEquals("tel:6045557890", getUrlAtMatch(3))
         assertEquals("tel:+16045557890", getUrlAtMatch(4))

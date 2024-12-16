@@ -9,7 +9,7 @@ actual annotation class IgnoreJvm
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 actual annotation class IgnoreAndroid
 
-actual typealias IgnoreWasmJs = kotlin.test.Ignore
-
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreJs
+actual annotation class IgnoreWasmJs
+
+actual typealias IgnoreJs = kotlin.test.Ignore

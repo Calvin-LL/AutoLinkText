@@ -11,3 +11,6 @@ expect annotation class IgnoreAndroid()
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 expect annotation class IgnoreWasmJs()
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+expect annotation class IgnoreJs()

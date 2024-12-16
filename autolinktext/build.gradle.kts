@@ -51,7 +51,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(compose.material3)
             implementation(libs.kermit)
         }
         commonTest.dependencies {
@@ -76,7 +76,7 @@ kotlin {
 
 android {
     namespace = project.group.toString()
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 21
     }

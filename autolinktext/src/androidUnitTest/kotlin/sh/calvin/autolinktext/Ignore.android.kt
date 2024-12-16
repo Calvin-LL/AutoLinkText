@@ -10,3 +10,6 @@ actual typealias IgnoreAndroid = org.junit.Ignore
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 actual annotation class IgnoreWasmJs
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+actual annotation class IgnoreJs

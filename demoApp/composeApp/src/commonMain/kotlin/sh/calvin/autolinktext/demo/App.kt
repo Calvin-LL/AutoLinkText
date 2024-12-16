@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -19,15 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import sh.calvin.autolinktext.AutoLinkText
 import sh.calvin.autolinktext.SimpleTextMatchResult
 import sh.calvin.autolinktext.TextMatcher
 import sh.calvin.autolinktext.TextRule
-import sh.calvin.autolinktext.TextRuleDefaults
+import sh.calvin.autolinktext.autoLinkText
 import sh.calvin.autolinktext.demo.ui.theme.AutoLinkTextTheme
 import sh.calvin.autolinktext.slice
 
@@ -52,178 +51,123 @@ fun MainScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            AutoLinkText(
-                text = """
+            Text(
+                AnnotatedString.autoLinkText(
+                    """
                     |Visit https://www.google.com
                     |Visit www.google.com
                     |Email test@example.com
                     |Call 6045557890
                     |Call +1 (604) 555-7890
                     |Call 604-555-7890
-                """.trimMargin(),
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-            )
-
-            AutoLinkText(
-                text = """
-                    |Visit https://www.google.com
-                    |Visit www.google.com
-                    |Email test@example.com
-                    |Call 6045557890
-                    |Call +1 (604) 555-7890
-                    |Call 604-555-7890
-                """.trimMargin(),
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                    textAlign = TextAlign.Center,
+                    """.trimMargin()
                 )
             )
 
-            AutoLinkText(
-                text = """
-                    |Visit https://www.google.com
-                    |Visit www.google.com
-                    |Email test@example.com
-                    |Call 6045557890
-                    |Call +1 (604) 555-7890
-                    |Call 604-555-7890
-                """.trimMargin(),
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = TextRuleDefaults.defaultList().map {
-                    it.copy(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline
+            Text(
+                AnnotatedString.autoLinkText(
+                    "Make your own rules like #hashtag and @mention",
+                    textRules = listOf(
+                        TextRule.Clickable(
+                            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
+                            onClick = {
+                                println("Hashtag ${it.matchedText} clicked")
+                            },
+                        ),
+                        TextRule.Clickable(
+                            textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
+                            onClick = {
+                                println("Mention ${it.matchedText} clicked")
+                            },
                         )
                     )
-                }
+                )
             )
 
-            AutoLinkText(
-                text = "Make your own rules like #hashtag and @mention",
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = listOf(
-                    TextRule(
-                        textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline
+            Text(
+                AnnotatedString.autoLinkText(
+                    "Style the same rule differently like #hashtag1 and #hashtag2",
+                    textRules = listOf(
+                        TextRule.Clickable(
+                            textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
+                            stylesProvider = {
+                                val hashtag = it.matchedText
+                                if (hashtag == "#hashtag1") {
+                                    TextLinkStyles(
+                                        SpanStyle(
+                                            color = Color.Red,
+                                            textDecoration = TextDecoration.Underline
+                                        )
+                                    )
+                                } else {
+                                    TextLinkStyles(
+                                        SpanStyle(
+                                            color = Color.Blue,
+                                            textDecoration = TextDecoration.Underline
+                                        )
+                                    )
+                                }
+                            },
+                            onClick = {
+                                println("Hashtag ${it.matchedText} clicked")
+                            },
                         ),
-                        onClick = {
-                            println("Hashtag ${it.matchedText} clicked")
-                        },
-                        annotationProvider = { "https://link.to.hashtag" },
-                    ),
-                    TextRule(
-                        textMatcher = TextMatcher.RegexMatcher(Regex("@\\w+")),
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.secondary,
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        onClick = {
-                            println("Mention ${it.matchedText} clicked")
-                        },
-                        annotationProvider = { "https://link.to.mentions" },
                     )
                 )
             )
 
-            AutoLinkText(
-                text = "Style the same rule differently like #hashtag1 and #hashtag2",
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = listOf(
-                    TextRule(
-                        textMatcher = TextMatcher.RegexMatcher(Regex("#\\w+")),
-                        styleProvider = {
-                            val hashtag = it.matchedText
-                            if (hashtag == "#hashtag1") {
-                                SpanStyle(
-                                    color = Color.Red,
-                                    textDecoration = TextDecoration.Underline
-                                )
-                            } else {
-                                SpanStyle(
-                                    color = Color.Blue,
-                                    textDecoration = TextDecoration.Underline
-                                )
-                            }
-                        },
-                        onClick = {
-                            println("Hashtag ${it.matchedText} clicked")
-                        },
-                        annotationProvider = { "https://link.to.hashtag" },
+            Text(
+                AnnotatedString.autoLinkText(
+                    "This is very important",
+                    textRules = listOf(
+                        TextRule.Styleable(
+                            textMatcher = TextMatcher.StringMatcher("important"),
+                            style = SpanStyle(color = Color.Red),
+                        )
                     ),
                 )
             )
 
-            AutoLinkText(
-                text = "This is very important",
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = listOf(
-                    TextRule(
-                        textMatcher = TextMatcher.StringMatcher("important"),
-                        style = SpanStyle(color = Color.Red),
-                        annotationProvider = { null },
-                    ),
-                )
-            )
-
-            AutoLinkText(
-                text = "Make every  other  word blue",
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = listOf(
-                    TextRule(
-                        textMatcher = TextMatcher.FunctionMatcher {
-                            val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
-                            var currentWordStart = 0
-                            "$it ".forEachIndexed { index, char ->
-                                if (char.isWhitespace()) {
-                                    val match = SimpleTextMatchResult(
-                                        start = currentWordStart,
-                                        end = index,
-                                    )
-                                    if (it.slice(match).isNotBlank()) {
-                                        matches.add(match)
+            Text(
+                AnnotatedString.autoLinkText(
+                    "Make every  other  word blue",
+                    textRules = listOf(
+                        TextRule.Styleable(
+                            textMatcher = TextMatcher.FunctionMatcher {
+                                val matches = mutableListOf<SimpleTextMatchResult<Nothing?>>()
+                                var currentWordStart = 0
+                                "$it ".forEachIndexed { index, char ->
+                                    if (char.isWhitespace()) {
+                                        val match = SimpleTextMatchResult(
+                                            start = currentWordStart,
+                                            end = index,
+                                        )
+                                        if (it.slice(match).isNotBlank()) {
+                                            matches.add(match)
+                                        }
+                                        currentWordStart = index + 1
                                     }
-                                    currentWordStart = index + 1
                                 }
-                            }
-                            matches.filterIndexed { index, _ -> index % 2 == 0 }
-                        },
-                        style = SpanStyle(color = Color.Blue),
-                        annotationProvider = { null },
+                                matches.filterIndexed { index, _ -> index % 2 == 0 }
+                            },
+                            style = SpanStyle(color = Color.Blue),
+                        ),
                     ),
                 )
             )
 
             var clickCount by remember { mutableIntStateOf(0) }
 
-            AutoLinkText(
-                text = "Make this clickable, this too but not THIS. Click count: $clickCount.",
-                style = LocalTextStyle.current.copy(
-                    color = LocalContentColor.current,
-                ),
-                textRules = listOf(
-                    TextRule(
-                        textMatcher = TextMatcher.StringMatcher("this"),
-                        onClick = {
-                            clickCount++
-                        },
-                        // as of right now, this is not usable with a screen reader
-                        // due to https://issuetracker.google.com/issues/274486643
-                        annotationProvider = { null },
+            Text(
+                AnnotatedString.autoLinkText(
+                    "Make this clickable, this too but not THIS. Click count: $clickCount.",
+                    textRules = listOf(
+                        TextRule.Clickable(
+                            textMatcher = TextMatcher.StringMatcher("this"),
+                            onClick = {
+                                clickCount++
+                            },
+                        )
                     )
                 )
             )

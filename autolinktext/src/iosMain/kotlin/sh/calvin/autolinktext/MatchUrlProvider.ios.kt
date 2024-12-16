@@ -3,8 +3,8 @@ package sh.calvin.autolinktext
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLComponents
 
-object IosMatchAnnotationProviderDefaults : MatchAnnotationProviderDefaultsInterface {
-    override val WebUrl: MatchAnnotationProvider<*>
+object IosMatchUrlProviderDefaults : MatchUrlProviderDefaultsInterface {
+    override val WebUrl: MatchUrlProvider<*>
         get() = {
             val url = when (val data = it.data) {
                 is NSURL -> data
@@ -15,7 +15,7 @@ object IosMatchAnnotationProviderDefaults : MatchAnnotationProviderDefaultsInter
             url?.absoluteString
         }
 
-    override val EmailAddress: MatchAnnotationProvider<*>
+    override val EmailAddress: MatchUrlProvider<*>
         get() = {
             val url = when (val data = it.data) {
                 is NSURL -> data
@@ -24,7 +24,7 @@ object IosMatchAnnotationProviderDefaults : MatchAnnotationProviderDefaultsInter
             url.absoluteString
         }
 
-    override val PhoneNumber: MatchAnnotationProvider<*>
+    override val PhoneNumber: MatchUrlProvider<*>
         get() = {
             val url = when (val data = it.data) {
                 is NSURL -> data
@@ -34,5 +34,5 @@ object IosMatchAnnotationProviderDefaults : MatchAnnotationProviderDefaultsInter
         }
 }
 
-internal actual fun getMatchAnnotationProviderDefaults(): MatchAnnotationProviderDefaultsInterface =
-    IosMatchAnnotationProviderDefaults
+internal actual fun getMatchUrlProviderDefaults(): MatchUrlProviderDefaultsInterface =
+    IosMatchUrlProviderDefaults

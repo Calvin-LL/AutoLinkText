@@ -4,9 +4,9 @@ import android.telephony.PhoneNumberUtils
 import androidx.core.net.toUri
 import java.net.URL
 
-internal actual fun getMatchAnnotationProviderDefaults() =
-    object : MatchAnnotationProviderDefaultsInterface {
-        override val WebUrl: MatchAnnotationProvider<*>
+internal actual fun getMatchUrlProviderDefaults() =
+    object : MatchUrlProviderDefaultsInterface {
+        override val WebUrl: MatchUrlProvider<*>
             get() = { result ->
                 val url = result.matchedText.toUri().let { uri ->
                     if (uri.scheme == null)
@@ -17,12 +17,12 @@ internal actual fun getMatchAnnotationProviderDefaults() =
                 url.toString()
             }
 
-        override val EmailAddress: MatchAnnotationProvider<*>
+        override val EmailAddress: MatchUrlProvider<*>
             get() = {
                 "mailto:${it.matchedText}"
             }
 
-        override val PhoneNumber: MatchAnnotationProvider<*>
+        override val PhoneNumber: MatchUrlProvider<*>
             get() = {
                 val phone = PhoneNumberUtils.normalizeNumber(it.matchedText)
                 "tel:${phone}"

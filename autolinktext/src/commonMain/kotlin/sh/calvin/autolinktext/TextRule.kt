@@ -2,10 +2,9 @@ package sh.calvin.autolinktext
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.UrlAnnotation
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.TextLinkStyles
 
 interface ContextData
 
@@ -13,24 +12,21 @@ val NullContextData: ContextData = object : ContextData {}
 
 interface TextRuleDefaultsInterface {
     @NotForAndroid
-    fun webUrl(contextData: ContextData = NullContextData) = TextRule(
+    fun webUrl(contextData: ContextData = NullContextData) = TextRule.Url(
         textMatcher = TextMatcherDefaults.webUrl(contextData),
-        onClick = MatchClickHandlerDefaults.webUrl(contextData),
-        annotationProvider = MatchAnnotationProviderDefaults.WebUrl,
+        urlProvider = MatchUrlProviderDefaults.WebUrl,
     )
 
     @NotForAndroid
-    fun emailAddress(contextData: ContextData = NullContextData) = TextRule(
+    fun emailAddress(contextData: ContextData = NullContextData) = TextRule.Url(
         textMatcher = TextMatcherDefaults.emailAddress(contextData),
-        onClick = MatchClickHandlerDefaults.emailAddress(contextData),
-        annotationProvider = MatchAnnotationProviderDefaults.EmailAddress,
+        urlProvider = MatchUrlProviderDefaults.EmailAddress,
     )
 
     @NotForAndroid
-    fun phoneNumber(contextData: ContextData = NullContextData) = TextRule(
+    fun phoneNumber(contextData: ContextData = NullContextData) = TextRule.Url(
         textMatcher = TextMatcherDefaults.phoneNumber(contextData),
-        onClick = MatchClickHandlerDefaults.phoneNumber(contextData),
-        annotationProvider = MatchAnnotationProviderDefaults.PhoneNumber,
+        urlProvider = MatchUrlProviderDefaults.PhoneNumber,
     )
 
     @NotForAndroid
@@ -65,63 +61,109 @@ val TextRuleDefaults = getTextRuleDefaults()
  * A rule to match text and apply style and click handling.
  *
  * @param textMatcher The matcher to find the text in the input.
- * @param styleProvider The provider to provide style for the matched text.
- * @param onClick The handler to handle click events on the matched text.
- * @param annotationProvider The provider to provide annotation for the matched text.
+ * @param stylesProvider The provider to provide style for the matched text.
  */
-class TextRule<T>(
-    val textMatcher: TextMatcher<T>,
-    val styleProvider: MatchStyleProvider<T>,
-    val onClick: MatchClickHandler<T>? = null,
-    // if there's no annotation but the text is clickable, use the matched text as the annotation
-    val annotationProvider: MatchAnnotationProvider<T> = if (onClick != null)
-        MatchAnnotationProviderDefaults.Verbatim
-    else
-    // if there's no annotation and the text is not clickable, use no annotation
-        MatchAnnotationProviderDefaults.NoAnnotation,
+sealed class TextRule<T> private constructor(
+    open val textMatcher: TextMatcher<T>,
+    open val stylesProvider: MatchStylesProvider<T>?,
 ) {
-    constructor(
-        textMatcher: TextMatcher<T>,
-        style: SpanStyle? = SpanStyle(
-            textDecoration = TextDecoration.Underline
-        ),
-        onClick: MatchClickHandler<T>? = null,
-        // if there's no annotation but the text is clickable, use the matched text as the annotation
-        annotationProvider: MatchAnnotationProvider<T> = if (onClick != null)
-            MatchAnnotationProviderDefaults.Verbatim
-        else
-        // if there's no annotation and the text is not clickable, use no annotation
-            MatchAnnotationProviderDefaults.NoAnnotation,
-    ) : this(
-        textMatcher = textMatcher,
-        styleProvider = { style },
-        onClick = onClick,
-        annotationProvider = annotationProvider,
-    )
+    /**
+     * A rule to match text and apply style and url.
+     *
+     * @param textMatcher The matcher to find the text in the input.
+     * @param stylesProvider The provider to provide style for the matched text.
+     * @param urlProvider The provider to provide urls for the matched text.
+     */
+    data class Url<T>(
+        override val textMatcher: TextMatcher<T>,
+        override val stylesProvider: MatchStylesProvider<T>? = null,
+        val urlProvider: MatchUrlProvider<T> = MatchUrlProviderDefaults.Verbatim
+    ) : TextRule<T>(textMatcher, stylesProvider) {
+        fun copy(
+            textMatcher: TextMatcher<T> = this.textMatcher,
+            styles: TextLinkStyles?,
+            urlProvider: MatchUrlProvider<T> = this.urlProvider,
+        ) = Url(
+            textMatcher = textMatcher,
+            stylesProvider = styles?.let { s -> { s } },
+            urlProvider = urlProvider,
+        )
 
-    fun copy(
-        textMatcher: TextMatcher<T> = this.textMatcher,
-        styleProvider: MatchStyleProvider<T> = this.styleProvider,
-        onClick: MatchClickHandler<T>? = this.onClick,
-        annotationProvider: MatchAnnotationProvider<T> = this.annotationProvider,
-    ) = TextRule(
-        textMatcher = textMatcher,
-        styleProvider = styleProvider,
-        onClick = onClick,
-        annotationProvider = annotationProvider,
-    )
+        override fun copy(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles,
+        ) = Url(
+            textMatcher = textMatcher,
+            stylesProvider = styles.let { s -> { s } },
+            urlProvider = this.urlProvider,
+        )
+    }
 
-    fun copy(
+    /**
+     * A rule to match text and apply style and click handling.
+     *
+     * @param textMatcher The matcher to find the text in the input.
+     * @param stylesProvider The provider to provide style for the matched text.
+     * @param onClick The handler to handle click events on the matched text.
+     */
+    data class Clickable<T>(
+        override val textMatcher: TextMatcher<T>,
+        override val stylesProvider: MatchStylesProvider<T>? = null,
+        val onClick: MatchClickHandler<T>,
+    ) : TextRule<T>(textMatcher, stylesProvider) {
+        fun copy(
+            textMatcher: TextMatcher<T> = this.textMatcher,
+            styles: TextLinkStyles?,
+            onClick: MatchClickHandler<T> = this.onClick,
+        ) = Clickable(
+            textMatcher = textMatcher,
+            stylesProvider = styles?.let { s -> { s } },
+            onClick = onClick,
+        )
+
+        override fun copy(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles,
+        ) = Clickable(
+            textMatcher = textMatcher,
+            stylesProvider = styles.let { s -> { s } },
+            onClick = this.onClick,
+        )
+    }
+
+    /**
+     * A rule to match text and apply style.
+     *
+     * @param textMatcher The matcher to find the text in the input.
+     * @param stylesProvider The provider to provide style for the matched text.
+     */
+    data class Styleable<T>(
+        override val textMatcher: TextMatcher<T>,
+        override val stylesProvider: MatchStylesProvider<T>,
+    ) : TextRule<T>(textMatcher, stylesProvider) {
+        constructor(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles,
+        ) : this(textMatcher, { styles })
+
+        constructor(
+            textMatcher: TextMatcher<T>,
+            style: SpanStyle,
+        ) : this(textMatcher, { TextLinkStyles(style) })
+
+        override fun copy(
+            textMatcher: TextMatcher<T>,
+            styles: TextLinkStyles,
+        ) = Styleable(
+            textMatcher = textMatcher,
+            stylesProvider = styles.let { s -> { s } },
+        )
+    }
+
+    abstract fun copy(
         textMatcher: TextMatcher<T> = this.textMatcher,
-        style: SpanStyle?,
-        onClick: MatchClickHandler<T>? = this.onClick,
-        annotationProvider: MatchAnnotationProvider<T> = this.annotationProvider,
-    ) = TextRule(
-        textMatcher = textMatcher,
-        styleProvider = { style },
-        onClick = onClick,
-        annotationProvider = annotationProvider,
-    )
+        styles: TextLinkStyles,
+    ): TextRule<T>
 }
 
 internal fun <T> Collection<TextRule<T>>.getAllMatches(text: String): List<TextMatchResult<T>> =
@@ -180,24 +222,59 @@ private fun <T> List<TextMatchResult<T>>.pruneOverlaps(): List<TextMatchResult<T
     return sortedList
 }
 
-@OptIn(ExperimentalTextApi::class)
-internal fun <T> List<TextMatchResult<T>>.annotateString(text: String): AnnotatedString {
+internal fun List<TextMatchResult<*>>.annotateString(text: String): AnnotatedString {
     val annotatedString = AnnotatedString.Builder(text)
     forEach { match ->
-        val style = match.rule.styleProvider(match)
-        if (style != null) {
-            annotatedString.addStyle(style, match.start, match.endExclusive)
+        annotatedString.addMatch(match)
+    }
+
+    return annotatedString.toAnnotatedString()
+}
+
+fun <T> AnnotatedString.Builder.addMatch(
+    match: TextMatchResult<T>
+) {
+    val styles = match.rule.stylesProvider?.invoke(match)
+    when (match.rule) {
+        is TextRule.Url -> {
+            val url = match.rule.urlProvider(match)
+
+            if (url != null) {
+                addLink(
+                    url = LinkAnnotation.Url(
+                        url = url,
+                        styles = styles,
+                    ),
+                    start = match.start,
+                    end = match.endExclusive,
+                )
+            }
         }
-        match.rule.annotationProvider(match)?.also { annotation ->
-            annotatedString.addUrlAnnotation(
-                urlAnnotation = UrlAnnotation(annotation),
+
+        is TextRule.Clickable -> {
+            addLink(
+                clickable = LinkAnnotation.Clickable(
+                    tag = "",
+                    styles = styles,
+                    linkInteractionListener = {
+                        match.rule.onClick(match)
+                    }
+                ),
                 start = match.start,
                 end = match.endExclusive,
             )
         }
-    }
 
-    return annotatedString.toAnnotatedString()
+        is TextRule.Styleable -> {
+            styles?.style?.let {
+                addStyle(
+                    it,
+                    match.start,
+                    match.endExclusive
+                )
+            }
+        }
+    }
 }
 
 fun <T> Collection<TextRule<T>>.annotateString(text: String): AnnotatedString {

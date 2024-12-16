@@ -1,8 +1,8 @@
 package sh.calvin.autolinktext
 
-internal actual fun getMatchAnnotationProviderDefaults() =
-    object : MatchAnnotationProviderDefaultsInterface {
-        override val WebUrl: MatchAnnotationProvider<*>
+internal actual fun getMatchUrlProviderDefaults() =
+    object : MatchUrlProviderDefaultsInterface {
+        override val WebUrl: MatchUrlProvider<*>
             get() = {
                 var url = it.matchedText
                 val protocolRegex = Regex("^\\S+://.+$")
@@ -13,12 +13,12 @@ internal actual fun getMatchAnnotationProviderDefaults() =
                 url
             }
 
-        override val EmailAddress: MatchAnnotationProvider<*>
+        override val EmailAddress: MatchUrlProvider<*>
             get() = {
                 "mailto:${it.matchedText}"
             }
 
-        override val PhoneNumber: MatchAnnotationProvider<*>
+        override val PhoneNumber: MatchUrlProvider<*>
             get() = {
                 "tel:${normalizePhoneNumber(it.matchedText)}"
             }
