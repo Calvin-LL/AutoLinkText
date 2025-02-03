@@ -40,7 +40,7 @@ fun AnnotatedString.Companion.rememberAutoLinkText(
         }
             .getAllMatches(text)
     }
-    val annotatedString = remember(matches) {
+    val annotatedString = remember(text, matches) {
         matches.annotateString(text)
     }
 
