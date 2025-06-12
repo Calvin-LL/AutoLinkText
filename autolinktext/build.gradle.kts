@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "sh.calvin.autolinktext"
-version = "2.0.1"
+version = "2.0.2"
 
 kotlin {
     coreLibrariesVersion = "1.9.0"
