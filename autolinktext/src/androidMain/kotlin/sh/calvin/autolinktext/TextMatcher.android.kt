@@ -47,7 +47,7 @@ internal actual fun getMatcherDefaults() = object : TextMatcherDefaultsInterface
     @NotForAndroid
     override fun phoneNumber(contextData: ContextData): TextMatcher<Any?> {
         val simCountryIso = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            (contextData as AndroidContextData).context.getSystemService(TelephonyManager::class.java).simCountryIso.let {
+            (contextData as AndroidContextData).context.getSystemService(TelephonyManager::class.java)?.simCountryIso?.let {
                 if (it.isNotEmpty()) it.uppercase() else null
             }
         } else {
