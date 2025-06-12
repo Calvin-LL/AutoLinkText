@@ -48,6 +48,15 @@ or
 autolinktext = { module = "sh.calvin.autolinktext:autolinktext", version = "2.0.1" }
 ```
 
+then
+
+```
+dependencies {
+    // ...
+    implementation(libs.autolinktext)
+}
+```
+
 ### Gradle
 
 If you're using Gradle instead, add the following to your `build.gradle` file:
@@ -56,6 +65,7 @@ If you're using Gradle instead, add the following to your `build.gradle` file:
 
 ```kotlin
 dependencies {
+    // ...
     implementation("sh.calvin.autolinktext:autolinktext:2.0.1")
 }
 ```
@@ -64,6 +74,7 @@ dependencies {
 
 ```groovy
 dependencies {
+    // ...
     implementation 'sh.calvin.autolinktext:autolinktext:2.0.1'
 }
 ```
